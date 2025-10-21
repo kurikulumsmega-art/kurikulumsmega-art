@@ -397,22 +397,341 @@
                  </div>
               </div>
         </section>
+// Konfigurasi
+const SPREADSHEET_ID = 'YOUR_SPREADSHEET_ID'; // Ganti dengan ID spreadsheet Anda
+const SCRIPT_URL = `https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec`; // Ganti dengan URL deploy Apps Script
 
-        <!-- Bagian Progres Pengumpulan Administrasi -->
-        <section id="progres" class="py-20 bg-white">
-            <div class="container mx-auto px-6">
-                <div class="text-center mb-12">
-                    <h2 class="text-3xl font-bold text-gray-800">Progres Pengumpulan Administrasi</h2>
-                    <p class="text-gray-600 mt-2">Pantau status kelengkapan administrasi bapak dan ibu guru.</p>
+// --- Logika Progres Guru dengan Database ---
+async function initializeProgressSection() {
+    const progressCardsContainer = document.getElementById('progress-cards-container');
+    const loadingState = document.getElementById('loading-state');
+    
+    if (!progressCardsContainer) return;
+    
+    try {
+        showLoadingState();
+        
+        // Ambil data dari Google Apps Script
+        const progressData = await fetchProgressData();
+        
+        // Render progress keseluruhan
+        renderOverallProgress(progressData);
+        
+        // Render kartu progress guru
+        renderProgressCards(progressData);
+        
+        // Setup filter dan pencarian
+        setupFiltersAndSearch(progressData);
+        
+        hideLoadingState();
+        
+    } catch (error) {
+        console.error('Error loading progress data:', error);
+        showErrorState('Gagal memuat data progress. Silakan refresh halaman.');
+    }
+}
+
+async function fetchProgressData() {
+    const response = await fetch(`${SCRIPT_URL}?action=getProgressData`);
+    
+    if (!response.ok) {
+        throw new Error('Network response was not ok');
+    }
+    
+    const data = await response.json();
+    return data;
+}
+
+function renderOverallProgress(teacherData) {
+    if (!teacherData || teacherData.length === 0) return;
+    
+    const totalTeachers = teacherData.length;
+    const totalDocs = teacherData[0]?.totalCount || 9;
+    const totalPossibleDocs = totalTeachers * totalDocs;
+    
+    let totalCompletedDocs = 0;
+    let totalProgress = 0;
+    
+    teacherData.forEach(teacher => {
+        totalCompletedDocs += teacher.completedCount;
+        totalProgress += teacher.progress;
+    });
+    
+    const overallCompletion = Math.round((totalCompletedDocs / totalPossibleDocs) * 100);
+    const averageProgress = Math.round(totalProgress / totalTeachers);
+    
+    // Update UI
+    document.getElementById('total-teachers').textContent = totalTeachers;
+    document.getElementById('completed-docs').textContent = `${overallCompletion}%`;
+    document.getElementById('avg-progress').textContent = `${averageProgress}%`;
+    
+    const progressBar = document.getElementById('overall-progress-bar');
+    const progressText = document.getElementById('overall-progress-text');
+    
+    if (progressBar && progressText) {
+        progressBar.style.width = `${overallCompletion}%`;
+        progressText.textContent = `${overallCompletion}% Selesai`;
+    }
+}
+
+function renderProgressCards(teacherData, filter = 'all', searchQuery = '') {
+    const container = document.getElementById('progress-cards-container');
+    if (!container) return;
+
+    // Filter data
+    let filteredData = teacherData;
+    
+    if (filter !== 'all') {
+        filteredData = teacherData.filter(teacher => teacher.status === filter);
+    }
+    
+    if (searchQuery) {
+        const query = searchQuery.toLowerCase();
+        filteredData = filteredData.filter(teacher => 
+            teacher.name.toLowerCase().includes(query)
+        );
+    }
+
+    // Urutkan berdasarkan progress (tertinggi ke terendah)
+    filteredData.sort((a, b) => b.progress - a.progress);
+
+    let cardsHTML = '';
+    
+    if (filteredData.length === 0) {
+        cardsHTML = `
+            <div class="text-center py-12">
+                <svg class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <p class="text-gray-500 text-lg">Tidak ada data yang ditemukan</p>
+            </div>
+        `;
+    } else {
+        filteredData.forEach((teacher, index) => {
+            const progress = teacher.progress;
+
+            cardsHTML += `
+                <div class="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden hover:shadow-lg transition-all duration-300" data-teacher="${teacher.name}" data-status="${teacher.status}">
+                    <div class="p-6">
+                        <!-- Header Kartu -->
+                        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-6">
+                            <div class="flex-1">
+                                <div class="flex items-center justify-between mb-2">
+                                    <h3 class="text-xl font-bold text-gray-800">${teacher.name}</h3>
+                                    <div class="flex items-center space-x-2">
+                                        <span class="inline-flex px-3 py-1 text-sm font-semibold rounded-full bg-gray-100 text-gray-800">
+                                            ${teacher.status}
+                                        </span>
+                                        <span class="text-lg font-bold ${progress === 100 ? 'text-green-600' : progress >= 70 ? 'text-blue-600' : progress >= 50 ? 'text-yellow-600' : 'text-red-600'}">
+                                            ${progress}%
+                                        </span>
+                                    </div>
+                                </div>
+                                <p class="text-gray-600 text-sm">NIP: ${teacher.nip}</p>
+                            </div>
+                        </div>
+
+                        <!-- Progress Bar -->
+                        <div class="mb-6">
+                            <div class="w-full bg-gray-200 rounded-full h-3">
+                                <div class="h-3 rounded-full transition-all duration-500 ${
+                                    progress === 100 ? 'bg-green-500' : 
+                                    progress >= 70 ? 'bg-blue-500' : 
+                                    progress >= 50 ? 'bg-yellow-500' : 'bg-red-500'
+                                }" style="width: ${progress}%"></div>
+                            </div>
+                            <div class="flex justify-between text-xs text-gray-500 mt-1">
+                                <span>0%</span>
+                                <span>${progress}% Selesai (${teacher.completedCount}/${teacher.totalCount})</span>
+                                <span>100%</span>
+                            </div>
+                        </div>
+
+                        <!-- Link Dokumen -->
+                        <div class="mt-4">
+                            <h4 class="text-lg font-semibold text-gray-800 mb-3">Link Pengumpulan Dokumen:</h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                ${teacher.documents.map(doc => `
+                                    <a href="${doc.link}" target="_blank" class="flex items-center p-3 rounded-lg border ${
+                                        doc.completed ? 'border-green-200 bg-green-50' : 'border-gray-200 bg-gray-50'
+                                    } hover:border-blue-500 hover:bg-blue-50 transition-all duration-200 group">
+                                        <div class="flex items-center justify-between w-full">
+                                            <div class="flex items-center">
+                                                <span class="text-sm font-medium ${
+                                                    doc.completed ? 'text-green-800' : 'text-gray-700'
+                                                } group-hover:text-blue-600 transition-colors">
+                                                    ${doc.name}
+                                                </span>
+                                            </div>
+                                            <div class="flex items-center space-x-2">
+                                                ${doc.completed ? 
+                                                    '<span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">✓ Selesai</span>' : 
+                                                    '<span class="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">Belum</span>'
+                                                }
+                                                <svg class="w-4 h-4 text-gray-400 group-hover:text-blue-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    </a>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
                 </div>
+            `;
+        });
+    }
 
-                <!-- Kartu Progress Guru (Berbaris) -->
-                <div id="progress-cards-container" class="max-w-6xl mx-auto space-y-6">
-                    <!-- Kartu progress akan di-generate oleh JavaScript -->
+    container.innerHTML = cardsHTML;
+}
+
+function setupFiltersAndSearch(teacherData) {
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    const searchInput = document.getElementById('search-teacher');
+    
+    let currentFilter = 'all';
+    let currentSearch = '';
+    
+    // Filter buttons
+    filterButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const status = this.getAttribute('data-status');
+            
+            // Update active button
+            filterButtons.forEach(btn => {
+                btn.classList.remove('active', 'bg-blue-600', 'text-white');
+                btn.classList.add('bg-gray-200', 'text-gray-700');
+            });
+            
+            this.classList.remove('bg-gray-200', 'text-gray-700');
+            this.classList.add('active', 'bg-blue-600', 'text-white');
+            
+            currentFilter = status;
+            renderProgressCards(teacherData, currentFilter, currentSearch);
+        });
+    });
+    
+    // Search input
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            currentSearch = this.value.trim();
+            renderProgressCards(teacherData, currentFilter, currentSearch);
+        });
+    }
+}
+
+function showLoadingState() {
+    const loadingState = document.getElementById('loading-state');
+    const container = document.getElementById('progress-cards-container');
+    
+    if (loadingState) loadingState.classList.remove('hidden');
+    if (container) container.innerHTML = '';
+}
+
+function hideLoadingState() {
+    const loadingState = document.getElementById('loading-state');
+    if (loadingState) loadingState.classList.add('hidden');
+}
+
+function showErrorState(message) {
+    const container = document.getElementById('progress-cards-container');
+    const loadingState = document.getElementById('loading-state');
+    
+    if (loadingState) loadingState.classList.add('hidden');
+    
+    if (container) {
+        container.innerHTML = `
+            <div class="text-center py-12">
+                <svg class="w-16 h-16 text-red-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <p class="text-red-600 text-lg mb-4">${message}</p>
+                <button onclick="initializeProgressSection()" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                    Coba Lagi
+                </button>
+            </div>
+        `;
+    }
+}
+        <!-- Bagian Progres Pengumpulan Administrasi -->
+<section id="progres" class="py-20 bg-white">
+    <div class="container mx-auto px-6">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl font-bold text-gray-800">Progres Pengumpulan Administrasi</h2>
+            <p class="text-gray-600 mt-2">Pantau status kelengkapan administrasi bapak dan ibu guru.</p>
+        </div>
+
+        <!-- Progress Keseluruhan -->
+        <div class="max-w-4xl mx-auto bg-blue-50 rounded-2xl p-8 mb-12">
+            <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">Progress Pengumpulan Keseluruhan</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-blue-600 mb-2" id="total-teachers">0</div>
+                    <div class="text-gray-600">Total Guru</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-green-600 mb-2" id="completed-docs">0%</div>
+                    <div class="text-gray-600">Dokumen Selesai</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-orange-600 mb-2" id="avg-progress">0%</div>
+                    <div class="text-gray-600">Rata-rata Progress</div>
                 </div>
             </div>
-        </section>
+            <div class="mt-6">
+                <div class="w-full bg-gray-200 rounded-full h-4">
+                    <div id="overall-progress-bar" class="bg-blue-600 h-4 rounded-full transition-all duration-1000" style="width: 0%"></div>
+                </div>
+                <div class="flex justify-between text-sm text-gray-600 mt-2">
+                    <span>0%</span>
+                    <span id="overall-progress-text">0% Selesai</span>
+                    <span>100%</span>
+                </div>
+            </div>
+        </div>
 
+        <!-- Filter dan Pencarian -->
+        <div class="max-w-6xl mx-auto mb-8">
+            <div class="flex flex-col md:flex-row gap-4 justify-between items-center">
+                <div class="flex gap-2">
+                    <button class="filter-btn active px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium transition-colors" data-status="all">
+                        Semua
+                    </button>
+                    <button class="filter-btn px-4 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-300 transition-colors" data-status="PNS">
+                        PNS
+                    </button>
+                    <button class="filter-btn px-4 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-300 transition-colors" data-status="PPPK">
+                        PPPK
+                    </button>
+                    <button class="filter-btn px-4 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-300 transition-colors" data-status="GTT">
+                        GTT
+                    </button>
+                    <button class="filter-btn px-4 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-300 transition-colors" data-status="Kontrak">
+                        Kontrak
+                    </button>
+                </div>
+                <div class="relative">
+                    <input type="text" id="search-teacher" placeholder="Cari nama guru..." class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    <svg class="w-5 h-5 text-gray-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- Kartu Progress Guru (Berbaris) -->
+        <div id="progress-cards-container" class="max-w-6xl mx-auto space-y-6">
+            <!-- Kartu progress akan di-generate oleh JavaScript -->
+        </div>
+
+        <!-- Loading State -->
+        <div id="loading-state" class="text-center py-12">
+            <div class="loading-spinner"></div>
+            <p class="text-gray-500 mt-4">Memuat data progress...</p>
+        </div>
+    </div>
+</section>
         <!-- Bagian Download Center -->
         <section id="download" class="py-20 bg-gray-100">
               <div class="container mx-auto px-6">
@@ -1020,3 +1339,4 @@
     </script>
 </body>
 </html>
+
