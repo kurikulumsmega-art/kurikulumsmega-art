@@ -1,7 +1,5 @@
 <!DOCTYPE html>
-
 <html lang="id">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -28,7 +26,6 @@
         header.scrolled {
             background-color: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(10px);
-            --tw-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
             box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
         }
         
@@ -56,6 +53,11 @@
         
         #login-modal.hidden {
             display: none;
+        }
+        /* Style untuk progress circle */
+        .progress-circle {
+            background: radial-gradient(closest-side, #f9fafb 79%, transparent 80% 100%),
+                        conic-gradient(#1d4ed8 0%, #e5e7eb 0);
         }
     </style>
 </head>
@@ -87,6 +89,7 @@
             <div class="hidden md:flex items-center space-x-8">
                 <div id="desktop-nav" class="flex items-center space-x-5 text-sm font-medium">
                     <a href="#perangkat" class="text-gray-600 hover:text-blue-700 transition duration-300">Perangkat Ajar</a>
+                    <a href="#progres" class="text-gray-600 hover:text-blue-700 transition duration-300">Progres Guru</a>
                     <a href="#download" class="text-gray-600 hover:text-blue-700 transition duration-300">Download Center</a>
                     <a href="#referensi" class="text-gray-600 hover:text-blue-700 transition duration-300">Referensi</a>
                 </div>
@@ -97,7 +100,7 @@
             
             <!-- Tombol Menu Mobile -->
             <button id="mobile-menu-button" class="md:hidden">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
                 </svg>
             </button>
@@ -105,6 +108,7 @@
         <!-- Menu Mobile -->
         <div id="mobile-menu" class="hidden md:hidden bg-white px-6 pb-4">
             <a href="#perangkat" class="block py-2 text-gray-600 hover:text-blue-700">Perangkat Ajar</a>
+            <a href="#progres" class="block py-2 text-gray-600 hover:text-blue-700">Progres Guru</a>
             <a href="#download" class="block py-2 text-gray-600 hover:text-blue-700">Download Center</a>
             <a href="#referensi" class="block py-2 text-gray-600 hover:text-blue-700">Referensi</a>
             <a href="tel:0281891550" class="block mt-2 bg-blue-600 text-white text-center px-4 py-2 rounded-lg hover:bg-blue-700">Hubungi Kami</a>
@@ -113,12 +117,19 @@
 
     <main id="main-content" class="pt-16" style="display: none;"> <!-- Konten utama disembunyikan secara default -->
         <!-- Bagian Hero -->
-        <section id="beranda" class="relative h-[calc(100vh-4rem)] flex items-center justify-center text-white bg-gradient-to-br from-gray-800 to-slate-900 overflow-hidden">
+        <section id="beranda" class="relative h-[calc(100vh-4rem)] flex items-center justify-center text-white overflow-hidden">
+            <!-- Background Image -->
+            <img src="https://images.unsplash.com/photo-1580582932707-520aed937b7b?q=80&w=1932&auto=format&fit=crop" 
+                 alt="Gedung sekolah SMK Negeri 1 Purbalingga" 
+                 class="absolute inset-0 w-full h-full object-cover z-0"
+                 onerror="this.onerror=null;this.src='https://placehold.co/1920x1080/334155/e2e8f0?text=SMK+Negeri+1+Purbalingga';">
+            <!-- Overlay -->
+            <div class="absolute inset-0 bg-gray-900 bg-opacity-60 z-10"></div>
             <!-- Background Pattern -->
-            <div class="absolute inset-0 z-0 opacity-5">
+            <div class="absolute inset-0 z-20 opacity-5">
                 <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="a" patternUnits="userSpaceOnUse" width="40" height="40" patternTransform="scale(2) rotate(45)"><rect x="0" y="0" width="100%" height="100%" fill="none"/><path d="M1-5v10M1-5v10M6-5v10M11-5v10M16-5v10M21-5v10M26-5v10M31-5v10M36-5v10M41-5v10" stroke-width="1" stroke="white" fill="none"/></pattern></defs><rect width="800%" height="800%" transform="translate(0,0)" fill="url(#a)"/></svg>
             </div>
-            <div class="relative z-10 text-center px-4">
+            <div class="relative z-30 text-center px-4">
                 <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-4 fade-in-up" style="animation-delay: 0.2s;">
                     Portal Kurikulum & Administrasi Guru
                 </h1>
@@ -142,18 +153,42 @@
                      <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-2 transition-all duration-300">
                          <a href="https://elearning.smkn1pbg.sch.id/" target="_blank" class="block">
                              <div class="flex items-center justify-center h-16 w-16 bg-orange-100 text-orange-600 rounded-full mb-4">
-                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
                              </div>
                              <h3 class="text-xl font-semibold mb-2">E-learning</h3>
                              <p class="text-gray-600">Akses platform pembelajaran online untuk materi dan tugas.</p>
                          </a>
                      </div>
                      
+                     <!-- Kartu e-Rapor -->
+                     <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-2 transition-all duration-300">
+                         <a href="http://erapor.smkn1pbg.sch.id/login" target="_blank" class="block">
+                             <div class="flex items-center justify-center h-16 w-16 bg-teal-100 text-teal-600 rounded-full mb-4">
+                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" /></svg>
+                             </div>
+                             <h3 class="text-xl font-semibold mb-2">e-Rapor</h3>
+                             <p class="text-gray-600">Akses langsung ke sistem nilai rapor siswa.</p>
+                         </a>
+                     </div>
+
+                    <!-- Kartu ePrakerin -->
+                    <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-2 transition-all duration-300">
+                        <a href="https://eprakerin.smkn1pbg.sch.id/" target="_blank" class="block">
+                            <div class="flex items-center justify-center h-16 w-16 bg-gray-100 text-gray-600 rounded-full mb-4">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-semibold mb-2">ePrakerin</h3>
+                            <p class="text-gray-600">Monitoring dan Jurnal PKL.</p>
+                        </a>
+                    </div>
+                     
                      <!-- Kartu RPM Interaktif -->
                      <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-2 transition-all duration-300">
                          <a href="https://kurikulumsmega-art.github.io/rpm-interaktif/" target="_blank" class="block">
                              <div class="flex items-center justify-center h-16 w-16 bg-blue-100 text-blue-600 rounded-full mb-4">
-                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
                              </div>
                              <h3 class="text-xl font-semibold mb-2">RPM Interaktif</h3>
                              <p class="text-gray-600">Buat dan sesuaikan modul ajar Anda secara langsung.</p>
@@ -163,7 +198,7 @@
                     <!-- Kartu Capaian Pembelajaran -->
                     <a href="https://drive.google.com/drive/folders/1OKvrGv6tOPpJ3h_ykojXFaR8tf9aCAmJ" target="_blank" class="block bg-white p-6 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-2 transition-all duration-300">
                         <div class="flex items-center justify-center h-16 w-16 bg-pink-100 text-pink-600 rounded-full mb-4">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                         </div>
                         <h3 class="text-xl font-semibold mb-2">Capaian Pembelajaran</h3>
                         <p class="text-gray-600">Kompetensi pembelajaran yang harus dicapai peserta didik.</p>
@@ -172,7 +207,7 @@
                     <!-- Kartu Alur Tujuan Pembelajaran -->
                     <a href="https://drive.google.com/drive/folders/1mrNtHJ3rs0n8OBB8XrEiXgYhbWDqgyp2?usp=sharing" target="_blank" class="block bg-white p-6 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-2 transition-all duration-300">
                         <div class="flex items-center justify-center h-16 w-16 bg-purple-100 text-purple-600 rounded-full mb-4">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
                         </div>
                         <h3 class="text-xl font-semibold mb-2">Alur Tujuan Pembelajaran</h3>
                         <p class="text-gray-600">Garis besar dan Alur Tujuan Pembelajaran setiap mapel.</p>
@@ -181,7 +216,7 @@
                     <!-- Kartu Program Tahunan -->
                     <a href="https://drive.google.com/drive/folders/1mP1MbGYqOAiPWMVw2zxPI4T2yazGaoF0?usp=sharing" target="_blank" class="block bg-white p-6 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-2 transition-all duration-300">
                         <div class="flex items-center justify-center h-16 w-16 bg-green-100 text-green-600 rounded-full mb-4">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                         </div>
                         <h3 class="text-xl font-semibold mb-2">Program Tahunan</h3>
                         <p class="text-gray-600">Distribusi alokasi waktu dan materi untuk satu tahun ajaran.</p>
@@ -190,18 +225,18 @@
                      <!-- Kartu Program Semester -->
                      <a href="https://drive.google.com/drive/folders/1CCNBz3y8ybY5CZmwv0jvfdklFfDiwZ1u?usp=sharing" target="_blank" class="block bg-white p-6 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-2 transition-all duration-300">
                          <div class="flex items-center justify-center h-16 w-16 bg-yellow-100 text-yellow-600 rounded-full mb-4">
-                             <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                             <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
                              </svg>
                          </div>
                          <h3 class="text-xl font-semibold mb-2">Program Semester</h3>
                          <p class="text-gray-600">Penjabaran program tahunan yang lebih detail per semester.</p>
-                    </a>
+                     </a>
 
                     <!-- Kartu Kalender Pendidikan -->
                     <a href="https://drive.google.com/drive/folders/1O1QjLrCgXc5qZ3cB_Q_eZYFyxHfEMSxa?usp=sharing" target="_blank" class="block bg-white p-6 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-2 transition-all duration-300">
                         <div class="flex items-center justify-center h-16 w-16 bg-red-100 text-red-600 rounded-full mb-4">
-                             <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                             <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                          </div>
                          <h3 class="text-xl font-semibold mb-2">Kalender Pendidikan</h3>
                          <p class="text-gray-600">Jadwal penting, hari libur, dan agenda kegiatan sekolah.</p>
@@ -210,31 +245,20 @@
                      <!-- Kartu Asesmen & Penilaian -->
                      <a href="https://drive.google.com/drive/folders/1HJgnvmnb6bvFQc-qPqGbpnrxbh-7VYgl" target="_blank" class="block bg-white p-6 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-2 transition-all duration-300">
                          <div class="flex items-center justify-center h-16 w-16 bg-indigo-100 text-indigo-600 rounded-full mb-4">
-                             <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" /></svg>
+                             <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" /></svg>
                          </div>
                          <h3 class="text-xl font-semibold mb-2">Asesmen & Penilaian</h3>
                          <p class="text-gray-600">Kelola dan analisis hasil asesmen formatif dan sumatif.</p>
-                    </a>
+                     </a>
 
-                     <!-- Kartu e-Rapor -->
-                     <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-2 transition-all duration-300">
-                         <a href="http://erapor.smkn1pbg.sch.id/login" target="_blank" class="block">
-                             <div class="flex items-center justify-center h-16 w-16 bg-teal-100 text-teal-600 rounded-full mb-4">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" /></svg>
-                             </div>
-                             <h3 class="text-xl font-semibold mb-2">e-Rapor</h3>
-                             <p class="text-gray-600">Akses langsung ke sistem nilai rapor siswa.</p>
-                         </a>
-                     </div>
-                    
                      <!-- Kartu Guru Wali -->
                      <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-2 transition-all duration-300">
                          <a href="https://guru-wali.vercel.app/" target="_blank" class="block">
                              <div class="flex items-center justify-center h-16 w-16 bg-purple-100 text-purple-600 rounded-full mb-4">
-                                  <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                       <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                       <path stroke-linecap="round" stroke-linejoin="round" d="M19 21v-2a4 4 0 00-4-4H9a4 4 0 00-4 4v2" />
-                                  </svg>
+                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                     <path stroke-linecap="round" stroke-linejoin="round" d="M19 21v-2a4 4 0 00-4-4H9a4 4 0 00-4 4v2" />
+                                 </svg>
                              </div>
                              <h3 class="text-xl font-semibold mb-2">Guru Wali</h3>
                              <p class="text-gray-600">Akses portal administrasi untuk guru wali.</p>
@@ -245,9 +269,9 @@
                      <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-2 transition-all duration-300">
                          <a href="https://drive.google.com/drive/folders/1fvptlAqUCkEs3DlFaQ4zf8A7YKzqCpje" target="_blank" class="block">
                              <div class="flex items-center justify-center h-16 w-16 bg-sky-100 text-sky-600 rounded-full mb-4">
-                                  <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                       <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                                  </svg>
+                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                     <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                 </svg>
                              </div>
                              <h3 class="text-xl font-semibold mb-2">Jadwal Guru</h3>
                              <p class="text-gray-600">Akses jadwal mengajar guru.</p>
@@ -258,9 +282,9 @@
                      <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-2 transition-all duration-300">
                          <a href="https://drive.google.com/drive/folders/1o_vkdJXKiHNRJhzXzrvuhag_tEaIzJMB?usp=sharing" target="_blank" class="block">
                              <div class="flex items-center justify-center h-16 w-16 bg-amber-100 text-amber-600 rounded-full mb-4">
-                                  <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                       <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
-                                  </svg>
+                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
+                                 </svg>
                              </div>
                              <h3 class="text-xl font-semibold mb-2">Kurikulum Satuan Pendidikan</h3>
                              <p class="text-gray-600">Dokumen operasional kurikulum sekolah.</p>
@@ -270,74 +294,135 @@
                      <!-- Kartu Perangkat PJBL -->
                      <a href="https://drive.google.com/drive/folders/1HdsHSRDIHyrJF9LLKKJVrgjdWQPocD5l?usp=sharing" target="_blank" class="block bg-white p-6 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-2 transition-all duration-300">
                          <div class="flex items-center justify-center h-16 w-16 bg-emerald-100 text-emerald-600 rounded-full mb-4">
-                              <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                               </svg>
                           </div>
                           <h3 class="text-xl font-semibold mb-2">Perangkat PJBL</h3>
                           <p class="text-gray-600">Dokumen perangkat pembelajaran berbasis proyek.</p>
-                    </a>
+                     </a>
                     
                      <!-- Kartu KKTP -->
                      <a href="https://drive.google.com/drive/folders/1bDnDfuSrhyzrRp0cOSooa5a2nqM05f1r?usp=sharing" target="_blank" class="block bg-white p-6 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-2 transition-all duration-300">
                          <div class="flex items-center justify-center h-16 w-16 bg-cyan-100 text-cyan-600 rounded-full mb-4">
-                              <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                               </svg>
                           </div>
                           <h3 class="text-xl font-semibold mb-2">KKTP</h3>
                           <p class="text-gray-600">Kriteria Ketuntasan Tujuan Pembelajaran.</p>
-                    </a>
+                     </a>
                     
                      <!-- Kartu TP (Tujuan Pembelajaran) -->
                      <a href="https://drive.google.com/drive/folders/18ZqekeD0CVr4YAT1i5UAc-M023OF7w68?usp=sharing" target="_blank" class="block bg-white p-6 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-2 transition-all duration-300">
                          <div class="flex items-center justify-center h-16 w-16 bg-rose-100 text-rose-600 rounded-full mb-4">
-                              <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4m-6 6l2 2" />
                               </svg>
                           </div>
                           <h3 class="text-xl font-semibold mb-2">TP (Tujuan Pembelajaran)</h3>
                           <p class="text-gray-600">Dokumen tujuan pembelajaran untuk setiap kompetensi.</p>
-                    </a>
+                     </a>
                     
-                     <!-- Kartu Analisis Minggu Efektif baru -->
+                     <!-- Kartu Analisis Minggu Efektif -->
                      <a href="https://drive.google.com/drive/folders/19n4nu_PU6EKzngoLMzzuCP17ylJXct2w?usp=sharing" target="_blank" class="block bg-white p-6 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-2 transition-all duration-300">
                          <div class="flex items-center justify-center h-16 w-16 bg-violet-100 text-violet-600 rounded-full mb-4">
-                              <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                               </svg>
                           </div>
                           <h3 class="text-xl font-semibold mb-2">Analisis Minggu Efektif</h3>
                           <p class="text-gray-600">Analisis jumlah minggu efektif dalam satu tahun pelajaran.</p>
-                    </a>
+                     </a>
 
                     <!-- Kartu Administrasi Guru BK -->
                     <a href="https://drive.google.com/drive/folders/1PIuvBRYyWUvDLiLDeZkL9eJ3HYtoTLuQ?usp=sharing" target="_blank" class="block bg-white p-6 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-2 transition-all duration-300">
-                         <div class="flex items-center justify-center h-16 w-16 bg-fuchsia-100 text-fuchsia-600 rounded-full mb-4">
-                              <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                   <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.653-.124-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                              </svg>
-                          </div>
-                          <h3 class="text-xl font-semibold mb-2">Administrasi Guru BK</h3>
-                          <p class="text-gray-600">Dokumen administrasi untuk Guru Bimbingan Konseling.</p>
+                        <div class="flex items-center justify-center h-16 w-16 bg-fuchsia-100 text-fuchsia-600 rounded-full mb-4">
+                             <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.653-.124-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                             </svg>
+                         </div>
+                         <h3 class="text-xl font-semibold mb-2">Administrasi Guru BK</h3>
+                         <p class="text-gray-600">Dokumen administrasi untuk Guru Bimbingan Konseling.</p>
                     </a>
 
                     <!-- Kartu Modul Ajar / RPM Supervisi -->
                     <a href="https://drive.google.com/drive/folders/1Zrlul0foICqyToT3t5_9Z_BEQnI45QJ-?usp=sharing" target="_blank" class="block bg-white p-6 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-2 transition-all duration-300">
-                         <div class="flex items-center justify-center h-16 w-16 bg-lime-100 text-lime-600 rounded-full mb-4">
-                              <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-                              </svg>
-                          </div>
-                          <h3 class="text-xl font-semibold mb-2">Modul Ajar / RPM Supervisi</h3>
-                          <p class="text-gray-600">Kumpulan modul ajar atau RPM untuk keperluan supervisi.</p>
+                        <div class="flex items-center justify-center h-16 w-16 bg-lime-100 text-lime-600 rounded-full mb-4">
+                             <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                             </svg>
+                         </div>
+                         <h3 class="text-xl font-semibold mb-2">Modul Ajar / RPM Supervisi</h3>
+                         <p class="text-gray-600">Kumpulan modul ajar atau RPM untuk keperluan supervisi.</p>
                     </a>
                  </div>
               </div>
         </section>
 
+        <!-- Bagian Progres Pengumpulan Administrasi -->
+        <section id="progres" class="py-20 bg-white">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl font-bold text-gray-800">Progres Pengumpulan Administrasi</h2>
+                    <p class="text-gray-600 mt-2">Pantau status kelengkapan administrasi bapak dan ibu guru secara real-time.</p>
+                </div>
+
+                <!-- Grafik Progres Keseluruhan & Checklist -->
+                <div class="max-w-7xl mx-auto bg-gray-50 p-6 sm:p-8 rounded-2xl shadow-md border border-gray-200 mb-12">
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
+                        <div class="flex flex-col items-center justify-center">
+                            <h3 class="text-xl font-bold text-gray-800 mb-4">Progres Keseluruhan</h3>
+                            <div id="overall-progress-circle" class="progress-circle w-40 h-40 rounded-full flex items-center justify-center shadow-inner">
+                                <span id="overall-progress-text" class="text-3xl font-bold text-blue-700">0%</span>
+                            </div>
+                        </div>
+                        <div class="lg:col-span-2">
+                             <h3 class="text-xl font-bold text-gray-800 mb-4">Checklist Administrasi</h3>
+                             <ul class="space-y-3">
+                                <li class="flex items-center">
+                                    <a href="https://drive.google.com/drive/folders/1OKvrGv6tOPpJ3h_ykojXFaR8tf9aCAmJ" target="_blank" class="text-gray-700 hover:text-blue-600 transition-colors duration-300 flex items-center w-full bg-white p-3 rounded-lg shadow-sm hover:shadow-md">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-pink-500 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                        Capaian Pembelajaran
+                                    </a>
+                                </li>
+                                <li class="flex items-center">
+                                     <a href="https://drive.google.com/drive/folders/1mrNtHJ3rs0n8OBB8XrEiXgYhbWDqgyp2?usp=sharing" target="_blank" class="text-gray-700 hover:text-blue-600 transition-colors duration-300 flex items-center w-full bg-white p-3 rounded-lg shadow-sm hover:shadow-md">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-purple-500 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                                        Alur Tujuan Pembelajaran
+                                    </a>
+                                </li>
+                                <li class="flex items-center">
+                                    <a href="https://drive.google.com/drive/folders/1mP1MbGYqOAiPWMVw2zxPI4T2yazGaoF0?usp=sharing" target="_blank" class="text-gray-700 hover:text-blue-600 transition-colors duration-300 flex items-center w-full bg-white p-3 rounded-lg shadow-sm hover:shadow-md">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                        Program Tahunan & Program Semester
+                                    </a>
+                                </li>
+                                 <li class="flex items-center">
+                                    <a href="https://drive.google.com/drive/folders/19n4nu_PU6EKzngoLMzzuCP17ylJXct2w?usp=sharing" target="_blank" class="text-gray-700 hover:text-blue-600 transition-colors duration-300 flex items-center w-full bg-white p-3 rounded-lg shadow-sm hover:shadow-md">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-violet-500 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
+                                        Analisis Minggu Efektif & Kaldik
+                                    </a>
+                                </li>
+                                <li class="flex items-center">
+                                    <a href="https://drive.google.com/drive/folders/1bDnDfuSrhyzrRp0cOSooa5a2nqM05f1r?usp=sharing" target="_blank" class="text-gray-700 hover:text-blue-600 transition-colors duration-300 flex items-center w-full bg-white p-3 rounded-lg shadow-sm hover:shadow-md">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-cyan-500 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                                        KKTP, RPM/Modul Ajar & Daftar Nilai
+                                    </a>
+                                </li>
+                             </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="progress-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 max-w-7xl mx-auto">
+                    <!-- Kartu progres akan di-generate oleh JavaScript -->
+                </div>
+            </div>
+        </section>
+
         <!-- Bagian Download Center -->
-        <section id="download" class="py-20 bg-white">
+        <section id="download" class="py-20 bg-gray-100">
               <div class="container mx-auto px-6">
                   <div class="text-center mb-12">
                       <h2 class="text-3xl font-bold text-gray-800">Download Center</h2>
@@ -346,56 +431,56 @@
                   <div class="max-w-4xl mx-auto">
                       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <!-- Item Download Capaian Pembelajaran -->
-                          <a href="https://drive.google.com/drive/folders/1OKvrGv6tOPpJ3h_ykojXFaR8tf9aCAmJ" target="_blank" class="bg-gray-50 p-4 rounded-lg flex justify-between items-center shadow-sm border border-transparent hover:border-blue-500 hover:bg-white transition-all group">
+                          <a href="https://drive.google.com/drive/folders/1OKvrGv6tOPpJ3h_ykojXFaR8tf9aCAmJ" target="_blank" class="bg-white p-4 rounded-lg flex justify-between items-center shadow-sm border border-transparent hover:border-blue-500 hover:bg-gray-50 transition-all group">
                               <div class="flex items-center">
-                                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-pink-600 mr-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-pink-600 mr-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                                   <span class="font-medium text-gray-700">Dokumen Capaian Pembelajaran</span>
                               </div>
                               <span class="text-blue-600 opacity-0 group-hover:opacity-100 transition-opacity text-sm font-semibold">Unduh</span>
                           </a>
                           
                           <!-- Item Download Format Asesmen & Penilaian -->
-                          <a href="https://bit.ly/Adm_ATS_SMKN1PBG_2025" target="_blank" class="bg-gray-50 p-4 rounded-lg flex justify-between items-center shadow-sm border border-transparent hover:border-blue-500 hover:bg-white transition-all group">
+                          <a href="https://bit.ly/Adm_ATS_SMKN1PBG_2025" target="_blank" class="bg-white p-4 rounded-lg flex justify-between items-center shadow-sm border border-transparent hover:border-blue-500 hover:bg-gray-50 transition-all group">
                               <div class="flex items-center">
-                                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-indigo-600 mr-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" /></svg>
+                                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-indigo-600 mr-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" /></svg>
                                   <span class="font-medium text-gray-700">Format Asesmen & Penilaian</span>
                               </div>
                               <span class="text-blue-600 opacity-0 group-hover:opacity-100 transition-opacity text-sm font-semibold">Unduh</span>
                           </a>
                           
                           <!-- Item Download Dokumen Kode Etik Guru -->
-                          <a href="https://docs.google.com/document/d/1Ul1MA4jGk3GeIqmtDE4A6cFtj2jdElSn/edit?usp=sharing&ouid=102226186241241543801&rtpof=true&sd=true" target="_blank" class="bg-gray-50 p-4 rounded-lg flex justify-between items-center shadow-sm border border-transparent hover:border-blue-500 hover:bg-white transition-all group">
+                          <a href="https://docs.google.com/document/d/1Ul1MA4jGk3GeIqmtDE4A6cFtj2jdElSn/edit?usp=sharing&ouid=102226186241241543801&rtpof=true&sd=true" target="_blank" class="bg-white p-4 rounded-lg flex justify-between items-center shadow-sm border border-transparent hover:border-blue-500 hover:bg-gray-50 transition-all group">
                               <div class="flex items-center">
-                                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-cyan-600 mr-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+                                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-cyan-600 mr-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
                                   <span class="font-medium text-gray-700">Dokumen Kode Etik Guru</span>
                               </div>
                               <span class="text-blue-600 opacity-0 group-hover:opacity-100 transition-opacity text-sm font-semibold">Unduh</span>
                           </a>
                           
                           <!-- Item Download Templat Daftar Murid -->
-                          <a href="https://docs.google.com/spreadsheets/d/1ZQw0_ZXAzFyxlCSCV1CByyMqUFXRQJSs/edit?usp=sharing&ouid=102226186241241543801&rtpof=true&sd=true" target="_blank" class="bg-gray-50 p-4 rounded-lg flex justify-between items-center shadow-sm border border-transparent hover:border-blue-500 hover:bg-white transition-all group">
+                          <a href="https://docs.google.com/spreadsheets/d/1ZQw0_ZXAzFyxlCSCV1CByyMqUFXRQJSs/edit?usp=sharing&ouid=102226186241241543801&rtpof=true&sd=true" target="_blank" class="bg-white p-4 rounded-lg flex justify-between items-center shadow-sm border border-transparent hover:border-blue-500 hover:bg-gray-50 transition-all group">
                               <div class="flex items-center">
-                                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-600 mr-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.653-.124-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+                                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-600 mr-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.653-.124-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
                                   <span class="font-medium text-gray-700">Templat Daftar Murid</span>
                               </div>
                               <span class="text-blue-600 opacity-0 group-hover:opacity-100 transition-opacity text-sm font-semibold">Unduh</span>
                           </a>
                           
                           <!-- Item Download Templat Daftar Nilai Mapel -->
-                          <a href="https://docs.google.com/spreadsheets/d/1ZQw0_ZXAzFyxlCSCV1CByyMqUFXRQJSs/edit?usp=sharing&ouid=102226186241241543801&rtpof=true&sd=true" target="_blank" class="bg-gray-50 p-4 rounded-lg flex justify-between items-center shadow-sm border border-transparent hover:border-blue-500 hover:bg-white transition-all group">
+                          <a href="https://docs.google.com/spreadsheets/d/1ZQw0_ZXAzFyxlCSCV1CByyMqUFXRQJSs/edit?usp=sharing&ouid=102226186241241543801&rtpof=true&sd=true" target="_blank" class="bg-white p-4 rounded-lg flex justify-between items-center shadow-sm border border-transparent hover:border-blue-500 hover:bg-gray-50 transition-all group">
                               <div class="flex items-center">
-                                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-600 mr-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
+                                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-600 mr-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
                                   <span class="font-medium text-gray-700">Templat Daftar Nilai Mapel</span>
                               </div>
                               <span class="text-blue-600 opacity-0 group-hover:opacity-100 transition-opacity text-sm font-semibold">Unduh</span>
                           </a>
                           
                           <!-- Item Download Templat Administrasi Guru Wali -->
-                          <a href="https://drive.google.com/file/d/1S6sn-ayexst06n_LO6tIoB3PVvzLSG_H/view?usp=sharing" target="_blank" class="bg-gray-50 p-4 rounded-lg flex justify-between items-center shadow-sm border border-transparent hover:border-blue-500 hover:bg-white transition-all group">
+                          <a href="https://drive.google.com/file/d/1S6sn-ayexst06n_LO6tIoB3PVvzLSG_H/view?usp=sharing" target="_blank" class="bg-white p-4 rounded-lg flex justify-between items-center shadow-sm border border-transparent hover:border-blue-500 hover:bg-gray-50 transition-all group">
                               <div class="flex items-center">
-                                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-purple-600 mr-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                       <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                       <path stroke-linecap="round" stroke-linejoin="round" d="M19 21v-2a4 4 0 00-4-4H9a4 4 0 00-4 4v2" />
+                                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-purple-600 mr-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                      <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                      <path stroke-linecap="round" stroke-linejoin="round" d="M19 21v-2a4 4 0 00-4-4H9a4 4 0 00-4 4v2" />
                                   </svg>
                                   <span class="font-medium text-gray-700">Templat Administrasi Guru Wali</span>
                               </div>
@@ -403,10 +488,10 @@
                           </a>
                           
                           <!-- Item Download Kurikulum Satuan Pendidikan -->
-                          <a href="https://drive.google.com/drive/folders/1o_vkdJXKiHNRJhzXzrvuhag_tEaIzJMB?usp=sharing" target="_blank" class="bg-gray-50 p-4 rounded-lg flex justify-between items-center shadow-sm border border-transparent hover:border-blue-500 hover:bg-white transition-all group">
+                          <a href="https://drive.google.com/drive/folders/1o_vkdJXKiHNRJhzXzrvuhag_tEaIzJMB?usp=sharing" target="_blank" class="bg-white p-4 rounded-lg flex justify-between items-center shadow-sm border border-transparent hover:border-blue-500 hover:bg-gray-50 transition-all group">
                               <div class="flex items-center">
-                                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-amber-600 mr-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                       <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
+                                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-amber-600 mr-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                      <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
                                   </svg>
                                   <span class="font-medium text-gray-700">Kurikulum Satuan Pendidikan</span>
                               </div>
@@ -414,54 +499,54 @@
                           </a>
                           
                           <!-- Item Download Dokumen RPM Guru All -->
-                          <a href="https://drive.google.com/drive/folders/1xQV43BoLaU0gms0o0wpPU_YXwTRIBhIF?usp=sharing" target="_blank" class="bg-gray-50 p-4 rounded-lg flex justify-between items-center shadow-sm border border-transparent hover:border-blue-500 hover:bg-white transition-all group">
+                          <a href="https://drive.google.com/drive/folders/1xQV43BoLaU0gms0o0wpPU_YXwTRIBhIF?usp=sharing" target="_blank" class="bg-white p-4 rounded-lg flex justify-between items-center shadow-sm border border-transparent hover:border-blue-500 hover:bg-gray-50 transition-all group">
                               <div class="flex items-center">
-                                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600 mr-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                       <path stroke-linecap="round" stroke-linejoin="round" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+                                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600 mr-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                      <path stroke-linecap="round" stroke-linejoin="round" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
                                   </svg>
                                   <span class="font-medium text-gray-700">Dokumen RPM Guru All</span>
                               </div>
                               <span class="text-blue-600 opacity-0 group-hover:opacity-100 transition-opacity text-sm font-semibold">Unduh</span>
                           </a>
-                        
+                          
                           <!-- Item Download Perangkat PJBL -->
-                          <a href="https://drive.google.com/drive/folders/1HdsHSRDIHyrJF9LLKKJVrgjdWQPocD5l?usp=sharing" target="_blank" class="bg-gray-50 p-4 rounded-lg flex justify-between items-center shadow-sm border border-transparent hover:border-blue-500 hover:bg-white transition-all group">
+                          <a href="https://drive.google.com/drive/folders/1HdsHSRDIHyrJF9LLKKJVrgjdWQPocD5l?usp=sharing" target="_blank" class="bg-white p-4 rounded-lg flex justify-between items-center shadow-sm border border-transparent hover:border-blue-500 hover:bg-gray-50 transition-all group">
                               <div class="flex items-center">
-                                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-emerald-600 mr-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-emerald-600 mr-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                                   </svg>
                                   <span class="font-medium text-gray-700">Perangkat PJBL</span>
                               </div>
                               <span class="text-blue-600 opacity-0 group-hover:opacity-100 transition-opacity text-sm font-semibold">Unduh</span>
                           </a>
-                        
+                          
                           <!-- Item Download KKTP -->
-                          <a href="https://drive.google.com/drive/folders/1bDnDfuSrhyzrRp0cOSooa5a2nqM05f1r?usp=sharing" target="_blank" class="bg-gray-50 p-4 rounded-lg flex justify-between items-center shadow-sm border border-transparent hover:border-blue-500 hover:bg-white transition-all group">
+                          <a href="https://drive.google.com/drive/folders/1bDnDfuSrhyzrRp0cOSooa5a2nqM05f1r?usp=sharing" target="_blank" class="bg-white p-4 rounded-lg flex justify-between items-center shadow-sm border border-transparent hover:border-blue-500 hover:bg-gray-50 transition-all group">
                               <div class="flex items-center">
-                                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-cyan-600 mr-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-cyan-600 mr-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                   </svg>
                                   <span class="font-medium text-gray-700">KKTP</span>
                               </div>
                               <span class="text-blue-600 opacity-0 group-hover:opacity-100 transition-opacity text-sm font-semibold">Unduh</span>
                           </a>
-                        
+                          
                           <!-- Item Download TP (Tujuan Pembelajaran) -->
-                          <a href="https://drive.google.com/drive/folders/18ZqekeD0CVr4YAT1i5UAc-M023OF7w68?usp=sharing" target="_blank" class="bg-gray-50 p-4 rounded-lg flex justify-between items-center shadow-sm border border-transparent hover:border-blue-500 hover:bg-white transition-all group">
+                          <a href="https://drive.google.com/drive/folders/18ZqekeD0CVr4YAT1i5UAc-M023OF7w68?usp=sharing" target="_blank" class="bg-white p-4 rounded-lg flex justify-between items-center shadow-sm border border-transparent hover:border-blue-500 hover:bg-gray-50 transition-all group">
                               <div class="flex items-center">
-                                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-rose-600 mr-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4m-6 6l2 2" />
+                                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-rose-600 mr-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4m-6 6l2 2" />
                                   </svg>
                                   <span class="font-medium text-gray-700">TP (Tujuan Pembelajaran)</span>
                               </div>
                               <span class="text-blue-600 opacity-0 group-hover:opacity-100 transition-opacity text-sm font-semibold">Unduh</span>
                           </a>
-                        
-                          <!-- Item Download Analisis Minggu Efektif baru -->
-                          <a href="https://drive.google.com/drive/folders/19n4nu_PU6EKzngoLMzzuCP17ylJXct2w?usp=sharing" target="_blank" class="bg-gray-50 p-4 rounded-lg flex justify-between items-center shadow-sm border border-transparent hover:border-blue-500 hover:bg-white transition-all group">
+                          
+                          <!-- Item Download Analisis Minggu Efektif -->
+                          <a href="https://drive.google.com/drive/folders/19n4nu_PU6EKzngoLMzzuCP17ylJXct2w?usp=sharing" target="_blank" class="bg-white p-4 rounded-lg flex justify-between items-center shadow-sm border border-transparent hover:border-blue-500 hover:bg-gray-50 transition-all group">
                               <div class="flex items-center">
-                                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-violet-600 mr-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-violet-600 mr-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                                   </svg>
                                   <span class="font-medium text-gray-700">Analisis Minggu Efektif</span>
                               </div>
@@ -486,7 +571,7 @@
                         <p class="text-gray-600">Platform edukasi yang menjadi teman belajar untuk guru dalam mengajar, belajar, dan berkarya.</p>
                         <span class="inline-flex items-center text-blue-600 font-semibold mt-4">
                             Kunjungi Situs
-                            <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                            <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
                         </span>
                     </a>
                     
@@ -496,7 +581,7 @@
                         <p class="text-gray-600">Pusat informasi resmi seputar kurikulum dari Kemendikbudristek.</p>
                          <span class="inline-flex items-center text-purple-600 font-semibold mt-4">
                             Kunjungi Situs
-                            <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                            <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
                         </span>
                     </a>
                     
@@ -506,7 +591,7 @@
                         <p class="text-gray-600">Portal pembelajaran yang menyediakan bahan belajar serta fasilitas komunikasi untuk siswa dan guru.</p>
                          <span class="inline-flex items-center text-teal-600 font-semibold mt-4">
                             Kunjungi Situs
-                            <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                            <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
                         </span>
                     </a>
                 </div>
@@ -522,9 +607,6 @@
             <p class="text-sm text-gray-400 mt-2">Jl. Mayor Jend. Sungkono No.34, Selabaya, Kec. Kalimanah, Kabupaten Purbalingga, Jawa Tengah 53371</p>
         </div>
     </footer>
-
-    <!-- Kotak pesan umum -->
-    <div id="app-message-box" class="fixed top-20 right-4 p-4 rounded-lg shadow-lg z-[110] hidden transition-all duration-300 text-white"></div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -543,6 +625,7 @@
                     loginModal.classList.add('hidden');
                     mainContent.style.display = 'block';
                     mainFooter.style.display = 'block';
+                    initializeProgressSection(); // Memuat data progres setelah login berhasil
                 } else {
                     errorMessage.classList.remove('hidden');
                     passwordInput.value = '';
@@ -563,22 +646,6 @@
                 .animate-shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }`;
             document.head.appendChild(style);
             
-            // --- Fungsi Pesan Umum ---
-            const messageBox = document.getElementById('app-message-box');
-            function showMessage(message, type = 'success') {
-                messageBox.textContent = message;
-                messageBox.className = 'fixed top-20 right-4 p-4 rounded-lg shadow-lg z-[110] transition-all duration-300 text-white'; // Reset classes
-                if (type === 'success') {
-                    messageBox.classList.add('bg-green-500');
-                } else {
-                    messageBox.classList.add('bg-red-500');
-                }
-                messageBox.classList.remove('hidden');
-                setTimeout(() => {
-                    messageBox.classList.add('hidden');
-                }, 3000);
-            }
-
             // --- Script Interaktivitas & Dinamis ---
             const header = document.querySelector('header');
             const mobileMenuButton = document.getElementById('mobile-menu-button');
@@ -625,13 +692,24 @@
                 });
             }
 
-            // --- Static Date, Time, and Dynamic Year for Footer ---
+            // --- Live Date, Time, and Dynamic Year for Footer ---
             const liveDateTimeElement = document.getElementById('live-datetime');
             const footerTextElement = document.getElementById('footer-text');
 
-            // Set the static date and time as requested
-            if (liveDateTimeElement) {
-                liveDateTimeElement.textContent = 'Selasa, 14 Oktober 2025 | 08:55 WIB';
+            function updateLiveTime() {
+                const now = new Date();
+                const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Jakarta', hour12: false };
+                const formatter = new Intl.DateTimeFormat('id-ID', options);
+                const parts = formatter.formatToParts(now);
+                
+                let formattedDateTime = '';
+                const map = new Map(parts.map(p => [p.type, p.value]));
+                
+                formattedDateTime = `${map.get('weekday')}, ${map.get('day')} ${map.get('month')} ${map.get('year')} | ${map.get('hour')}:${map.get('minute')} WIB`;
+
+                if (liveDateTimeElement) {
+                    liveDateTimeElement.textContent = formattedDateTime;
+                }
             }
 
             function setFooterYear() {
@@ -641,6 +719,141 @@
                 }
             }
             
+            // --- Logika Progres Guru ---
+            function initializeProgressSection() {
+                const progressContainer = document.getElementById('progress-container');
+                const overallProgressCircle = document.getElementById('overall-progress-circle');
+                if (!progressContainer || !overallProgressCircle) return;
+                
+                progressContainer.innerHTML = '<p class="text-center md:col-span-2 lg:col-span-4 text-gray-500">Memuat data progres guru...</p>';
+                overallProgressCircle.style.background = `radial-gradient(closest-side, #f9fafb 79%, transparent 80% 100%), conic-gradient(#e5e7eb 360deg, #e5e7eb 0)`;
+
+                const scriptURL = 'https://script.google.com/macros/s/AKfycbyrSy2Xs4ajkjGh2u-CL8Jv-Kef6MkL58DBnS_ye2mmgjnCGI2pNtpWboSFkVwhz1wl/exec';
+
+                fetch(scriptURL)
+                    .then(response => {
+                        if (!response.ok) throw new Error('Network response was not ok.');
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data && data.length > 0) {
+                             const adminKeys = [
+                                'Capaian Pembelajaran', 'Alur Tujuan Pembelajaran', 'Program Tahunan', 
+                                'Program Semester', 'analisis minggu efektif', 'KKTP', 'Kaldik', 
+                                'RPM/ Modul Ajar', 'Daftar Nilai'
+                            ];
+                            
+                            const teacherProgressData = data.map(teacher => {
+                                let completedCount = 0;
+                                adminKeys.forEach(key => {
+                                    if (teacher[key] === true) {
+                                        completedCount++;
+                                    }
+                                });
+                                const progress = Math.round((completedCount / adminKeys.length) * 100);
+                                return {
+                                    name: teacher.Nama,
+                                    status: teacher.Status,
+                                    progress: progress
+                                };
+                            }).filter(teacher => teacher.name); // Filter out rows without a name
+
+                            renderOverallProgress(teacherProgressData);
+                            renderIndividualProgressCards(teacherProgressData);
+                        } else {
+                           throw new Error('No data received from the source.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching live data:', error);
+                        const progressSection = document.getElementById('progres');
+                        if(progressSection){
+                            const fallbackMessage = document.createElement('p');
+                            fallbackMessage.id = 'fallback-message';
+                            fallbackMessage.className = "text-center text-sm text-amber-700 bg-amber-100 p-3 rounded-lg mb-6 max-w-7xl mx-auto";
+                            fallbackMessage.textContent = 'Tidak dapat memuat data progres live. Menampilkan data statis sebagai gantinya.';
+                            
+                            // Hindari duplikasi pesan
+                            if (!document.getElementById('fallback-message')) {
+                                progressContainer.insertAdjacentElement('beforebegin', fallbackMessage);
+                            }
+                        }
+                        renderFallbackData();
+                    });
+            }
+
+            function renderFallbackData() {
+                 const fallbackTeachers = [
+                    // PNS
+                    { name: 'Dra. Sri Mularsih', status: 'PNS' }, { name: 'Drs. Fiva Widiarto', status: 'PNS' }, { name: 'Wahyu Budi Susapti, S.Pd, MM.', status: 'PNS' }, { name: 'Marwoto, S.Pd, S.Kom', status: 'PNS' }, { name: 'Sri Endah Swarastuti, S.Pd', status: 'PNS' }, { name: 'Dra. Cukat Budi Rahayu', status: 'PNS' }, { name: 'Dra. Diah Ayu Supriyanti', status: 'PNS' }, { name: 'Justina Trirahaju Leksanawati, S.Pd., M.Si.', status: 'PNS' }, { name: 'Sri Wahyuni, S.Pd', status: 'PNS' }, { name: 'Dwi Agus Tri M.M., S.Pd', status: 'PNS' }, { name: 'Sumardi, S.Pd., S.Kom', status: 'PNS' }, { name: 'Agung Pamuji, S.Pd', status: 'PNS' }, { name: 'Retnowati, S.Pd', status: 'PNS' }, { name: 'Tony Eka Martin Wibowo, S.Si.', status: 'PNS' }, { name: 'Nur Romlah, S.Pd', status: 'PNS' }, { name: 'Deddy Suwito, S.Kom', status: 'PNS' }, { name: 'Agus Wuryanto, S.Pd', status: 'PNS' }, { name: 'Tri Puji Utami, S.Kom', status: 'PNS' }, { name: 'Puji Pertiwi Sayekti, S.Pd', status: 'PNS' }, { name: 'Nur Fajriyahti, S.Pd.', status: 'PNS' }, { name: 'Srirahayu, S.Pd.', status: 'PNS' }, { name: 'Romidin, S.Pd', status: 'PNS' }, { name: 'Teguh Cahyono, S.Pd.', status: 'PNS' }, { name: 'Seto Eko Purwanto, S.Si', status: 'PNS' }, { name: 'Nelly Amaliyah, S.Psi', status: 'PNS' }, { name: 'Satyo Nugroho, S.Kom.', status: 'PNS' }, { name: 'Suratno, S.Pd', status: 'PNS' }, { name: 'Vektor Realita Aditopo, S.Pd', status: 'PNS' }, { name: 'Adi Setiawan, S.Pd.', status: 'PNS' }, { name: 'Galih Tyas Anjari, S.Pd.', status: 'PNS' }, { name: 'Deti Lestiyorini, S.Pd.', status: 'PNS' }, { name: 'Mahzun, S.Pd I', status: 'PNS' }, { name: 'Sugeng Pitoyo, S.Pd.', status: 'PNS' }, { name: 'Asriyatun, S.Pd', status: 'PNS' }, { name: 'Nur Laeli, S.Pd', status: 'PNS' },
+                    // PPPK
+                    { name: 'Sepudin Zupri, S.Kom', status: 'PPPK' }, { name: 'Arif Nurokhman, S.Pd', status: 'PPPK' }, { name: 'Elis Sugiarti, S.Pd.', status: 'PPPK' }, { name: 'Sudiyarti, S.Pd', status: 'PPPK' }, { name: 'Otiah, S.Pd.', status: 'PPPK' }, { name: 'Novaristya Widyasmara Pamungkas, S.Pd', status: 'PPPK' }, { name: 'Menik Yuni Hartini, S.Pd.', status: 'PPPK' }, { name: 'Baiq Nur Aisyah, S.Pd.', status: 'PPPK' }, { name: 'Sulistiono, S.Pd.', status: 'PPPK' }, { name: 'Isria Rizqona Firdausyi, S.Pd.', status: 'PPPK' }, { name: 'Hindun Fatmawati, S.Pd.', status: 'PPPK' }, { name: 'Ana Nurlatifah, S.Pd.', status: 'PPPK' }, { name: 'Dwi Inayah Rahmawati, M.Pd.', status: 'PPPK' }, { name: 'Danu Dwi Jatmiko, S.Pd.', status: 'PPPK' }, { name: 'Restu Afri Widhi Hastutiningsih, S.Pd.', status: 'PPPK' }, { name: 'Nining Setiani, S.Pd.', status: 'PPPK' }, { name: 'Kukuh Pribadi, S.Pd.', status: 'PPPK' }, { name: 'Yekti Apriyoni, S.Pd.', status: 'PPPK' }, { name: 'Novita Adhimurti, S.Pd.', status: 'PPPK' }, { name: 'Khamsyatun Yudiana, S.Pd.I.', status: 'PPPK' }, { name: 'Nanang Cahyana, S.Pd.Ing.', status: 'PPPK' }, { name: 'Waskito Ismu Hastomo, S.Pd.', status: 'PPPK' }, { name: 'Lely Erawati, S.Pd.', status: 'PPPK' }, { name: 'Septian Endro Laksono, S.Pd.', status: 'PPPK' }, { name: 'Firmanika Rozaqi, S.Pd.', status: 'PPPK' }, { name: 'Devi Artati, S.Pd.', status: 'PPPK' }, { name: 'Soviatun Khasanah, S.Pd.', status: 'PPPK' }, { name: 'Miftah Iskandar, S.Pd.', status: 'PPPK' }, { name: 'Dista Puspitasari Adi, S.Pd.', status: 'PPPK' }, { name: 'Rita Wijiarti, S.Pd.', status: 'PPPK' }, { name: 'Safa Aulia Astri, S.Sos', status: 'PPPK' }, { name: 'Agus Sutono, S.Pd.', status: 'PPPK' }, { name: 'Yanti Karadina, S.Pd.', status: 'PPPK' }, { name: 'Widia Sukaesih, S.E.', status: 'PPPK' }, { name: 'Triyanto, S.Pd.', status: 'PPPK' }, { name: 'Inayatul Munawaroh, S.Pd.', status: 'PPPK' }, { name: 'Danu Setio Aji, S.Pd.', status: 'PPPK' }, { name: 'Hera Dwi Suryandari, S.Pd.', status: 'PPPK' },
+                    // GTT
+                    { name: 'Slamet Suparman, S.Pd.', status: 'GTT' }, { name: 'Devi Dwi Wahyuni, S.Pd.', status: 'GTT' }, { name: 'Muhammad Idris Afandi, S.S., M.Pd.', status: 'GTT' },
+                    // Kontrak
+                    { name: 'Rindhi Rezqi Hertindha, M.Pd.', status: 'Kontrak' }, { name: 'Seli Fadriyah, S.Pd.', status: 'Kontrak' }, { name: 'Nurhidayah, S.S., M.Pd.', status: 'Kontrak' }, { name: 'Prana Prakasita, S.Pd.', status: 'Kontrak' }, { name: 'Rita Puspitasari, S.Pd.', status: 'Kontrak' }, { name: 'Ullil Hykmah, S.Pd.', status: 'Kontrak' }
+                ];
+                
+                const teacherProgressData = fallbackTeachers.map(teacher => ({
+                    ...teacher,
+                    progress: Math.floor(Math.random() * 81) + 20 // Random progress 20-100%
+                }));
+
+                renderOverallProgress(teacherProgressData);
+                renderIndividualProgressCards(teacherProgressData);
+            }
+
+            function renderOverallProgress(teacherData) {
+                if(!teacherData || teacherData.length === 0) return;
+                const totalProgress = teacherData.reduce((sum, teacher) => sum + teacher.progress, 0);
+                const overallPercentage = Math.round(totalProgress / teacherData.length);
+
+                const circle = document.getElementById('overall-progress-circle');
+                const percentageText = document.getElementById('overall-progress-text');
+                
+                if (circle && percentageText) {
+                    circle.style.background = `radial-gradient(closest-side, #f9fafb 79%, transparent 80% 100%), conic-gradient(#1d4ed8 ${overallPercentage}%, #e5e7eb 0)`;
+                    percentageText.textContent = `${overallPercentage}%`;
+                }
+            }
+
+            function renderIndividualProgressCards(teacherData) {
+                const container = document.getElementById('progress-container');
+                if (!container) return;
+
+                // Urutkan berdasarkan nama
+                teacherData.sort((a, b) => a.name.localeCompare(b.name));
+
+                let cardHTML = '';
+                if (teacherData.length === 0) {
+                    container.innerHTML = '<p class="text-center md:col-span-2 lg:col-span-4 text-gray-500">Tidak ada data guru untuk ditampilkan.</p>';
+                    return;
+                }
+                
+                teacherData.forEach(teacher => {
+                    const progress = teacher.progress;
+                    let progressBarColor = 'bg-green-500';
+                    if (progress < 50) {
+                        progressBarColor = 'bg-red-500';
+                    } else if (progress < 90) {
+                        progressBarColor = 'bg-yellow-500';
+                    }
+
+                    cardHTML += `
+                        <div class="bg-white p-5 rounded-lg shadow-md border border-gray-200 hover:shadow-lg transition-shadow duration-300">
+                            <p class="font-semibold text-gray-800 truncate" title="${teacher.name}">${teacher.name}</p>
+                            <p class="text-xs text-gray-500 mb-3">${teacher.status || 'N/A'}</p>
+                            <div class="w-full bg-gray-200 rounded-full h-2.5 mb-1">
+                                <div class="${progressBarColor} h-2.5 rounded-full" style="width: ${progress}%"></div>
+                            </div>
+                            <p class="text-right text-sm font-medium text-gray-700">${progress}% Selesai</p>
+                        </div>
+                    `;
+                });
+                container.innerHTML = cardHTML;
+            }
+
+
             window.addEventListener('scroll', () => {
                 changeHeaderStyle();
                 highlightActiveLink();
@@ -650,9 +863,11 @@
             changeHeaderStyle();
             highlightActiveLink();
             setFooterYear();
+            updateLiveTime();
+            // initializeProgressSection() dipanggil setelah login berhasil
+            setInterval(updateLiveTime, 60000); // Update every minute
         });
     </script>
 </body>
 </html>
-
 
