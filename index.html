@@ -467,59 +467,66 @@
         </section>
 
         <!-- Bagian Progres Pengumpulan Administrasi -->
-        <section id="progres" class="py-20 bg-white">
-            <div class="container mx-auto px-6">
-                <div class="text-center mb-12">
-                    <h2 class="text-3xl font-bold text-gray-800">Progres Pengumpulan Administrasi</h2>
-                    <p class="text-gray-600 mt-2">Pantau status kelengkapan administrasi bapak dan ibu guru secara real-time.</p>
-                </div>
+<section id="progres" class="py-20 bg-white">
+    <div class="container mx-auto px-6">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl font-bold text-gray-800">Progres Pengumpulan Administrasi</h2>
+            <p class="text-gray-600 mt-2">Pantau status kelengkapan administrasi bapak dan ibu guru secara real-time.</p>
+        </div>
 
-                <!-- Grafik Progres Keseluruhan & Checklist -->
-                <div class="max-w-7xl mx-auto bg-gray-50 p-6 sm:p-8 rounded-2xl shadow-md border border-gray-200 mb-12">
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
-                        <div class="flex flex-col items-center justify-center">
-                            <h3 class="text-xl font-bold text-gray-800 mb-4">Progres Keseluruhan</h3>
-                            <div id="overall-progress-circle" class="progress-circle w-40 h-40 rounded-full flex items-center justify-center shadow-inner">
-                                <span id="overall-progress-text" class="text-3xl font-bold text-blue-700">0%</span>
-                            </div>
-                        </div>
-                        <div class="lg:col-span-2">
-                             <h3 class="text-xl font-bold text-gray-800 mb-4">Checklist Administrasi</h3>
-                             <ul class="space-y-3">
-                                <li class="flex items-center">
-                                    <a href="https://drive.google.com/drive/folders/1OKvrGv6tOPpJ3h_ykojXFaR8tf9aCAmJ" target="_blank" class="text-gray-700 hover:text-blue-600 transition-colors duration-300 flex items-center w-full bg-white p-3 rounded-lg shadow-sm hover:shadow-md">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-pink-500 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                        Capaian Pembelajaran
-                                    </a>
-                                </li>
-                                <li class="flex items-center">
-                                     <a href="https://drive.google.com/drive/folders/1mrNtHJ3rs0n8OBB8XrEiXgYhbWDqgyp2?usp=sharing" target="_blank" class="text-gray-700 hover:text-blue-600 transition-colors duration-300 flex items-center w-full bg-white p-3 rounded-lg shadow-sm hover:shadow-md">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-purple-500 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
-                                        Alur Tujuan Pembelajaran
-                                    </a>
-                                </li>
-                                <li class="flex items-center">
-                                    <a href="https://drive.google.com/drive/folders/1mP1MbGYqOAiPWMVw2zxPI4T2yazGaoF0?usp=sharing" target="_blank" class="text-gray-700 hover:text-blue-600 transition-colors duration-300 flex items-center w-full bg-white p-3 rounded-lg shadow-sm hover:shadow-md">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                                        Program Tahunan & Program Semester
-                                    </a>
-                                </li>
-                                 <li class="flex items-center">
-                                    <a href="https://drive.google.com/drive/folders/19n4nu_PU6EKzngoLMzzuCP17ylJXct2w?usp=sharing" target="_blank" class="text-gray-700 hover:text-blue-600 transition-colors duration-300 flex items-center w-full bg-white p-3 rounded-lg shadow-sm hover:shadow-md">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-violet-500 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
-                                        Analisis Minggu Efektif & Kaldik
-                                    </a>
-                                </li>
-                                <li class="flex items-center">
-                                    <a href="https://drive.google.com/drive/folders/1bDnDfuSrhyzrRp0cOSooa5a2nqM05f1r?usp=sharing" target="_blank" class="text-gray-700 hover:text-blue-600 transition-colors duration-300 flex items-center w-full bg-white p-3 rounded-lg shadow-sm hover:shadow-md">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-cyan-500 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
-                                        KKTP, RPM/Modul Ajar & Daftar Nilai
-                                    </a>
-                                </li>
-                             </ul>
-                        </div>
+        <!-- Grafik Progres Keseluruhan & Checklist -->
+        <div class="max-w-7xl mx-auto bg-gray-50 p-6 sm:p-8 rounded-2xl shadow-md border border-gray-200 mb-12">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
+                <div class="flex flex-col items-center justify-center">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">Progres Keseluruhan</h3>
+                    <div id="overall-progress-circle" class="progress-circle w-40 h-40 rounded-full flex items-center justify-center shadow-inner">
+                        <span id="overall-progress-text" class="text-3xl font-bold text-blue-700">0%</span>
                     </div>
                 </div>
+                <div class="lg:col-span-2">
+                     <h3 class="text-xl font-bold text-gray-800 mb-4">Checklist Administrasi</h3>
+                     <ul class="space-y-3">
+                        <li class="flex items-center">
+                            <a href="https://drive.google.com/drive/folders/1OKvrGv6tOPpJ3h_ykojXFaR8tf9aCAmJ" target="_blank" class="text-gray-700 hover:text-blue-600 transition-colors duration-300 flex items-center w-full bg-white p-3 rounded-lg shadow-sm hover:shadow-md">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-pink-500 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                Capaian Pembelajaran
+                            </a>
+                        </li>
+                        <li class="flex items-center">
+                             <a href="https://drive.google.com/drive/folders/1mrNtHJ3rs0n8OBB8XrEiXgYhbWDqgyp2?usp=sharing" target="_blank" class="text-gray-700 hover:text-blue-600 transition-colors duration-300 flex items-center w-full bg-white p-3 rounded-lg shadow-sm hover:shadow-md">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-purple-500 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                                Alur Tujuan Pembelajaran
+                            </a>
+                        </li>
+                        <li class="flex items-center">
+                            <a href="https://drive.google.com/drive/folders/1mP1MbGYqOAiPWMVw2zxPI4T2yazGaoF0?usp=sharing" target="_blank" class="text-gray-700 hover:text-blue-600 transition-colors duration-300 flex items-center w-full bg-white p-3 rounded-lg shadow-sm hover:shadow-md">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                Program Tahunan & Program Semester
+                            </a>
+                        </li>
+                         <li class="flex items-center">
+                            <a href="https://drive.google.com/drive/folders/19n4nu_PU6EKzngoLMzzuCP17ylJXct2w?usp=sharing" target="_blank" class="text-gray-700 hover:text-blue-600 transition-colors duration-300 flex items-center w-full bg-white p-3 rounded-lg shadow-sm hover:shadow-md">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-violet-500 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
+                                Analisis Minggu Efektif & Kaldik
+                            </a>
+                        </li>
+                        <li class="flex items-center">
+                            <a href="https://drive.google.com/drive/folders/1bDnDfuSrhyzrRp0cOSooa5a2nqM05f1r?usp=sharing" target="_blank" class="text-gray-700 hover:text-blue-600 transition-colors duration-300 flex items-center w-full bg-white p-3 rounded-lg shadow-sm hover:shadow-md">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-cyan-500 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                                KKTP, RPM/Modul Ajar & Daftar Nilai
+                            </a>
+                        </li>
+                     </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Kartu Progress Guru (Berbaris) -->
+        <div id="progress-cards-container" class="max-w-7xl mx-auto space-y-6">
+            <!-- Kartu progress akan di-generate oleh JavaScript -->
+        </div>
+    </div>
+</section>
 
                 <!-- Tabel Progres Guru -->
                 <div class="max-w-7xl mx-auto bg-white rounded-2xl shadow-md border border-gray-200 overflow-hidden">
@@ -1291,3 +1298,4 @@
     </script>
 </body>
 </html>
+
