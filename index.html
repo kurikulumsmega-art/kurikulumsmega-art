@@ -13,6 +13,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
+    <!-- Ikon Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
         /* Menambahkan font Poppins ke semua elemen */
         body {
@@ -59,6 +62,45 @@
             background: radial-gradient(closest-side, #f9fafb 79%, transparent 80% 100%),
                         conic-gradient(#1d4ed8 0%, #e5e7eb 0);
         }
+        
+        /* Style untuk tombol kembali ke atas */
+        #back-to-top {
+            transition: all 0.3s ease;
+        }
+        
+        /* Style untuk mode gelap */
+        .dark-mode {
+            background-color: #1f2937;
+            color: #f9fafb;
+        }
+        
+        .dark-mode .card {
+            background-color: #374151;
+            color: #f9fafb;
+        }
+        
+        /* Style untuk pencarian */
+        .search-highlight {
+            background-color: #fef3c7;
+            padding: 2px 4px;
+            border-radius: 4px;
+        }
+        
+        /* Animasi loading */
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .loading-spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left-color: #3b82f6;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800">
@@ -93,6 +135,17 @@
                     <a href="#download" class="text-gray-600 hover:text-blue-700 transition duration-300">Download Center</a>
                     <a href="#referensi" class="text-gray-600 hover:text-blue-700 transition duration-300">Referensi</a>
                 </div>
+                
+                <!-- Tombol Mode Gelap -->
+                <button id="dark-mode-toggle" class="p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors">
+                    <i class="fas fa-moon text-gray-700"></i>
+                </button>
+                
+                <!-- Tombol Pencarian -->
+                <button id="search-toggle" class="p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors">
+                    <i class="fas fa-search text-gray-700"></i>
+                </button>
+                
                 <a href="tel:0281891550" class="bg-blue-600 text-white px-5 py-2 rounded-full font-semibold hover:bg-blue-700 transition duration-300 shadow-sm text-sm">
                     Hubungi Kami
                 </a>
@@ -105,17 +158,60 @@
                 </svg>
             </button>
         </nav>
+        
         <!-- Menu Mobile -->
         <div id="mobile-menu" class="hidden md:hidden bg-white px-6 pb-4">
             <a href="#perangkat" class="block py-2 text-gray-600 hover:text-blue-700">Perangkat Ajar</a>
             <a href="#progres" class="block py-2 text-gray-600 hover:text-blue-700">Progres Guru</a>
             <a href="#download" class="block py-2 text-gray-600 hover:text-blue-700">Download Center</a>
             <a href="#referensi" class="block py-2 text-gray-600 hover:text-blue-700">Referensi</a>
+            
+            <div class="flex justify-between mt-2">
+                <button id="mobile-dark-mode-toggle" class="p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors">
+                    <i class="fas fa-moon text-gray-700"></i>
+                </button>
+                <button id="mobile-search-toggle" class="p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors">
+                    <i class="fas fa-search text-gray-700"></i>
+                </button>
+            </div>
+            
             <a href="tel:0281891550" class="block mt-2 bg-blue-600 text-white text-center px-4 py-2 rounded-lg hover:bg-blue-700">Hubungi Kami</a>
         </div>
     </header>
 
-    <main id="main-content" class="pt-16" style="display: none;"> <!-- Konten utama disembunyikan secara default -->
+    <!-- Modal Pencarian -->
+    <div id="search-modal" class="fixed inset-0 bg-gray-900 bg-opacity-70 z-[90] flex items-start justify-center p-4 hidden">
+        <div class="bg-white rounded-lg shadow-2xl w-full max-w-2xl mt-20 p-6">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold text-gray-800">Cari Dokumen</h3>
+                <button id="close-search" class="p-2 rounded-full hover:bg-gray-100 transition-colors">
+                    <i class="fas fa-times text-gray-700"></i>
+                </button>
+            </div>
+            <input type="text" id="search-input" class="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" placeholder="Ketik kata kunci...">
+            <div id="search-results" class="mt-4 max-h-64 overflow-y-auto hidden">
+                <!-- Hasil pencarian akan ditampilkan di sini -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Notifikasi -->
+    <div id="notification" class="fixed top-20 right-4 z-50 max-w-sm bg-white shadow-lg rounded-lg p-4 hidden transition-all duration-300 transform translate-x-full">
+        <div class="flex items-start">
+            <div id="notification-icon" class="flex-shrink-0 mr-3">
+                <i class="fas fa-info-circle text-blue-500 text-xl"></i>
+            </div>
+            <div class="flex-1">
+                <h4 id="notification-title" class="font-semibold text-gray-800">Judul Notifikasi</h4>
+                <p id="notification-message" class="text-sm text-gray-600 mt-1">Pesan notifikasi akan muncul di sini.</p>
+            </div>
+            <button id="close-notification" class="flex-shrink-0 ml-4 text-gray-400 hover:text-gray-500">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+
+    <main id="main-content" class="pt-16" style="display: none;">
         <!-- Bagian Hero -->
         <section id="beranda" class="relative h-[calc(100vh-4rem)] flex items-center justify-center text-white overflow-hidden">
             <!-- Background Image -->
@@ -148,9 +244,19 @@
                      <h2 class="text-3xl font-bold text-gray-800">Pusat Perangkat Ajar</h2>
                      <p class="text-gray-600 mt-2">Akses cepat ke semua dokumen administrasi pembelajaran.</p>
                  </div>
-                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                 
+                 <!-- Filter Kategori -->
+                 <div class="flex flex-wrap justify-center gap-2 mb-8">
+                     <button class="filter-btn active px-4 py-2 bg-blue-600 text-white rounded-full text-sm font-medium transition-colors" data-filter="all">Semua</button>
+                     <button class="filter-btn px-4 py-2 bg-gray-200 text-gray-700 rounded-full text-sm font-medium hover:bg-gray-300 transition-colors" data-filter="platform">Platform</button>
+                     <button class="filter-btn px-4 py-2 bg-gray-200 text-gray-700 rounded-full text-sm font-medium hover:bg-gray-300 transition-colors" data-filter="perencanaan">Perencanaan</button>
+                     <button class="filter-btn px-4 py-2 bg-gray-200 text-gray-700 rounded-full text-sm font-medium hover:bg-gray-300 transition-colors" data-filter="penilaian">Penilaian</button>
+                     <button class="filter-btn px-4 py-2 bg-gray-200 text-gray-700 rounded-full text-sm font-medium hover:bg-gray-300 transition-colors" data-filter="administrasi">Administrasi</button>
+                 </div>
+                 
+                 <div id="perangkat-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                      <!-- Kartu E-learning -->
-                     <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-2 transition-all duration-300">
+                     <div class="card bg-white p-6 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-2 transition-all duration-300" data-category="platform">
                          <a href="https://elearning.smkn1pbg.sch.id/" target="_blank" class="block">
                              <div class="flex items-center justify-center h-16 w-16 bg-orange-100 text-orange-600 rounded-full mb-4">
                                  <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
@@ -161,7 +267,7 @@
                      </div>
                      
                      <!-- Kartu e-Rapor -->
-                     <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-2 transition-all duration-300">
+                     <div class="card bg-white p-6 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-2 transition-all duration-300" data-category="platform">
                          <a href="http://erapor.smkn1pbg.sch.id/login" target="_blank" class="block">
                              <div class="flex items-center justify-center h-16 w-16 bg-teal-100 text-teal-600 rounded-full mb-4">
                                  <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" /></svg>
@@ -172,7 +278,7 @@
                      </div>
 
                     <!-- Kartu ePrakerin -->
-                    <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-2 transition-all duration-300">
+                    <div class="card bg-white p-6 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-2 transition-all duration-300" data-category="platform">
                         <a href="https://eprakerin.smkn1pbg.sch.id/" target="_blank" class="block">
                             <div class="flex items-center justify-center h-16 w-16 bg-gray-100 text-gray-600 rounded-full mb-4">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
@@ -185,7 +291,7 @@
                     </div>
                      
                      <!-- Kartu RPM Interaktif -->
-                     <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-2 transition-all duration-300">
+                     <div class="card bg-white p-6 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-2 transition-all duration-300" data-category="perencanaan">
                          <a href="https://kurikulumsmega-art.github.io/rpm-interaktif/" target="_blank" class="block">
                              <div class="flex items-center justify-center h-16 w-16 bg-blue-100 text-blue-600 rounded-full mb-4">
                                  <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
@@ -196,7 +302,7 @@
                      </div>
                     
                     <!-- Kartu Capaian Pembelajaran -->
-                    <a href="https://drive.google.com/drive/folders/1OKvrGv6tOPpJ3h_ykojXFaR8tf9aCAmJ" target="_blank" class="block bg-white p-6 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-2 transition-all duration-300">
+                    <a href="https://drive.google.com/drive/folders/1OKvrGv6tOPpJ3h_ykojXFaR8tf9aCAmJ" target="_blank" class="card block bg-white p-6 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-2 transition-all duration-300" data-category="perencanaan">
                         <div class="flex items-center justify-center h-16 w-16 bg-pink-100 text-pink-600 rounded-full mb-4">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                         </div>
@@ -205,7 +311,7 @@
                     </a>
 
                     <!-- Kartu Alur Tujuan Pembelajaran -->
-                    <a href="https://drive.google.com/drive/folders/1mrNtHJ3rs0n8OBB8XrEiXgYhbWDqgyp2?usp=sharing" target="_blank" class="block bg-white p-6 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-2 transition-all duration-300">
+                    <a href="https://drive.google.com/drive/folders/1mrNtHJ3rs0n8OBB8XrEiXgYhbWDqgyp2?usp=sharing" target="_blank" class="card block bg-white p-6 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-2 transition-all duration-300" data-category="perencanaan">
                         <div class="flex items-center justify-center h-16 w-16 bg-purple-100 text-purple-600 rounded-full mb-4">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
                         </div>
@@ -214,7 +320,7 @@
                     </a>
 
                     <!-- Kartu Program Tahunan -->
-                    <a href="https://drive.google.com/drive/folders/1mP1MbGYqOAiPWMVw2zxPI4T2yazGaoF0?usp=sharing" target="_blank" class="block bg-white p-6 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-2 transition-all duration-300">
+                    <a href="https://drive.google.com/drive/folders/1mP1MbGYqOAiPWMVw2zxPI4T2yazGaoF0?usp=sharing" target="_blank" class="card block bg-white p-6 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-2 transition-all duration-300" data-category="perencanaan">
                         <div class="flex items-center justify-center h-16 w-16 bg-green-100 text-green-600 rounded-full mb-4">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                         </div>
@@ -223,7 +329,7 @@
                     </a>
 
                      <!-- Kartu Program Semester -->
-                     <a href="https://drive.google.com/drive/folders/1CCNBz3y8ybY5CZmwv0jvfdklFfDiwZ1u?usp=sharing" target="_blank" class="block bg-white p-6 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-2 transition-all duration-300">
+                     <a href="https://drive.google.com/drive/folders/1CCNBz3y8ybY5CZmwv0jvfdklFfDiwZ1u?usp=sharing" target="_blank" class="card block bg-white p-6 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-2 transition-all duration-300" data-category="perencanaan">
                          <div class="flex items-center justify-center h-16 w-16 bg-yellow-100 text-yellow-600 rounded-full mb-4">
                              <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
@@ -234,7 +340,7 @@
                      </a>
 
                     <!-- Kartu Kalender Pendidikan -->
-                    <a href="https://drive.google.com/drive/folders/1O1QjLrCgXc5qZ3cB_Q_eZYFyxHfEMSxa?usp=sharing" target="_blank" class="block bg-white p-6 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-2 transition-all duration-300">
+                    <a href="https://drive.google.com/drive/folders/1O1QjLrCgXc5qZ3cB_Q_eZYFyxHfEMSxa?usp=sharing" target="_blank" class="card block bg-white p-6 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-2 transition-all duration-300" data-category="perencanaan">
                         <div class="flex items-center justify-center h-16 w-16 bg-red-100 text-red-600 rounded-full mb-4">
                              <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                          </div>
@@ -243,7 +349,7 @@
                     </a>
 
                      <!-- Kartu Asesmen & Penilaian -->
-                     <a href="https://drive.google.com/drive/folders/1HJgnvmnb6bvFQc-qPqGbpnrxbh-7VYgl" target="_blank" class="block bg-white p-6 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-2 transition-all duration-300">
+                     <a href="https://drive.google.com/drive/folders/1HJgnvmnb6bvFQc-qPqGbpnrxbh-7VYgl" target="_blank" class="card block bg-white p-6 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-2 transition-all duration-300" data-category="penilaian">
                          <div class="flex items-center justify-center h-16 w-16 bg-indigo-100 text-indigo-600 rounded-full mb-4">
                              <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" /></svg>
                          </div>
@@ -252,7 +358,7 @@
                      </a>
 
                      <!-- Kartu Guru Wali -->
-                     <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-2 transition-all duration-300">
+                     <div class="card bg-white p-6 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-2 transition-all duration-300" data-category="administrasi">
                          <a href="https://guru-wali.vercel.app/" target="_blank" class="block">
                              <div class="flex items-center justify-center h-16 w-16 bg-purple-100 text-purple-600 rounded-full mb-4">
                                  <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
@@ -266,7 +372,7 @@
                      </div>
                     
                      <!-- Kartu Jadwal Guru -->
-                     <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-2 transition-all duration-300">
+                     <div class="card bg-white p-6 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-2 transition-all duration-300" data-category="administrasi">
                          <a href="https://drive.google.com/drive/folders/1fvptlAqUCkEs3DlFaQ4zf8A7YKzqCpje" target="_blank" class="block">
                              <div class="flex items-center justify-center h-16 w-16 bg-sky-100 text-sky-600 rounded-full mb-4">
                                  <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
@@ -279,7 +385,7 @@
                      </div>
                     
                      <!-- Kartu Kurikulum Satuan Pendidikan -->
-                     <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-2 transition-all duration-300">
+                     <div class="card bg-white p-6 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-2 transition-all duration-300" data-category="administrasi">
                          <a href="https://drive.google.com/drive/folders/1o_vkdJXKiHNRJhzXzrvuhag_tEaIzJMB?usp=sharing" target="_blank" class="block">
                              <div class="flex items-center justify-center h-16 w-16 bg-amber-100 text-amber-600 rounded-full mb-4">
                                  <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
@@ -292,7 +398,7 @@
                      </div>
                     
                      <!-- Kartu Perangkat PJBL -->
-                     <a href="https://drive.google.com/drive/folders/1HdsHSRDIHyrJF9LLKKJVrgjdWQPocD5l?usp=sharing" target="_blank" class="block bg-white p-6 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-2 transition-all duration-300">
+                     <a href="https://drive.google.com/drive/folders/1HdsHSRDIHyrJF9LLKKJVrgjdWQPocD5l?usp=sharing" target="_blank" class="card block bg-white p-6 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-2 transition-all duration-300" data-category="perencanaan">
                          <div class="flex items-center justify-center h-16 w-16 bg-emerald-100 text-emerald-600 rounded-full mb-4">
                               <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
@@ -303,7 +409,7 @@
                      </a>
                     
                      <!-- Kartu KKTP -->
-                     <a href="https://drive.google.com/drive/folders/1bDnDfuSrhyzrRp0cOSooa5a2nqM05f1r?usp=sharing" target="_blank" class="block bg-white p-6 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-2 transition-all duration-300">
+                     <a href="https://drive.google.com/drive/folders/1bDnDfuSrhyzrRp0cOSooa5a2nqM05f1r?usp=sharing" target="_blank" class="card block bg-white p-6 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-2 transition-all duration-300" data-category="perencanaan">
                          <div class="flex items-center justify-center h-16 w-16 bg-cyan-100 text-cyan-600 rounded-full mb-4">
                               <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -314,7 +420,7 @@
                      </a>
                     
                      <!-- Kartu TP (Tujuan Pembelajaran) -->
-                     <a href="https://drive.google.com/drive/folders/18ZqekeD0CVr4YAT1i5UAc-M023OF7w68?usp=sharing" target="_blank" class="block bg-white p-6 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-2 transition-all duration-300">
+                     <a href="https://drive.google.com/drive/folders/18ZqekeD0CVr4YAT1i5UAc-M023OF7w68?usp=sharing" target="_blank" class="card block bg-white p-6 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-2 transition-all duration-300" data-category="perencanaan">
                          <div class="flex items-center justify-center h-16 w-16 bg-rose-100 text-rose-600 rounded-full mb-4">
                               <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4m-6 6l2 2" />
@@ -325,7 +431,7 @@
                      </a>
                     
                      <!-- Kartu Analisis Minggu Efektif -->
-                     <a href="https://drive.google.com/drive/folders/19n4nu_PU6EKzngoLMzzuCP17ylJXct2w?usp=sharing" target="_blank" class="block bg-white p-6 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-2 transition-all duration-300">
+                     <a href="https://drive.google.com/drive/folders/19n4nu_PU6EKzngoLMzzuCP17ylJXct2w?usp=sharing" target="_blank" class="card block bg-white p-6 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-2 transition-all duration-300" data-category="perencanaan">
                          <div class="flex items-center justify-center h-16 w-16 bg-violet-100 text-violet-600 rounded-full mb-4">
                               <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
@@ -336,7 +442,7 @@
                      </a>
 
                     <!-- Kartu Administrasi Guru BK -->
-                    <a href="https://drive.google.com/drive/folders/1PIuvBRYyWUvDLiLDeZkL9eJ3HYtoTLuQ?usp=sharing" target="_blank" class="block bg-white p-6 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-2 transition-all duration-300">
+                    <a href="https://drive.google.com/drive/folders/1PIuvBRYyWUvDLiLDeZkL9eJ3HYtoTLuQ?usp=sharing" target="_blank" class="card block bg-white p-6 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-2 transition-all duration-300" data-category="administrasi">
                         <div class="flex items-center justify-center h-16 w-16 bg-fuchsia-100 text-fuchsia-600 rounded-full mb-4">
                              <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.653-.124-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
@@ -347,7 +453,7 @@
                     </a>
 
                     <!-- Kartu Modul Ajar / RPM Supervisi -->
-                    <a href="https://drive.google.com/drive/folders/1Zrlul0foICqyToT3t5_9Z_BEQnI45QJ-?usp=sharing" target="_blank" class="block bg-white p-6 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-2 transition-all duration-300">
+                    <a href="https://drive.google.com/drive/folders/1Zrlul0foICqyToT3t5_9Z_BEQnI45QJ-?usp=sharing" target="_blank" class="card block bg-white p-6 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-2 transition-all duration-300" data-category="perencanaan">
                         <div class="flex items-center justify-center h-16 w-16 bg-lime-100 text-lime-600 rounded-full mb-4">
                              <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
                                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
@@ -415,8 +521,25 @@
                     </div>
                 </div>
 
-                <div id="progress-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 max-w-7xl mx-auto">
-                    <!-- Kartu progres akan di-generate oleh JavaScript -->
+                <!-- Tabel Progres Guru -->
+                <div class="max-w-7xl mx-auto bg-white rounded-2xl shadow-md border border-gray-200 overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No</th>
+                                    <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama Guru</th>
+                                    <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">NIP</th>
+                                    <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                    <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Progres Administrasi</th>
+                                    <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="progress-table-body" class="bg-white divide-y divide-gray-200">
+                                <!-- Data akan diisi oleh JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </section>
@@ -600,8 +723,13 @@
 
     </main>
 
+    <!-- Tombol Kembali ke Atas -->
+    <button id="back-to-top" class="fixed bottom-8 right-8 bg-blue-600 text-white p-3 rounded-full shadow-lg hover:bg-blue-700 transition-all duration-300 opacity-0 z-40">
+        <i class="fas fa-chevron-up"></i>
+    </button>
+
     <!-- Footer -->
-    <footer id="main-footer" class="bg-gray-800 text-white py-10" style="display: none;"> <!-- Footer juga disembunyikan -->
+    <footer id="main-footer" class="bg-gray-800 text-white py-10" style="display: none;">
         <div class="container mx-auto px-6 text-center">
             <p id="footer-text"></p>
             <p class="text-sm text-gray-400 mt-2">Jl. Mayor Jend. Sungkono No.34, Selabaya, Kec. Kalimanah, Kabupaten Purbalingga, Jawa Tengah 53371</p>
@@ -626,6 +754,7 @@
                     mainContent.style.display = 'block';
                     mainFooter.style.display = 'block';
                     initializeProgressSection(); // Memuat data progres setelah login berhasil
+                    showNotification('Selamat datang!', 'Anda berhasil masuk ke Portal Kurikulum SMK Negeri 1 Purbalingga.', 'success');
                 } else {
                     errorMessage.classList.remove('hidden');
                     passwordInput.value = '';
@@ -719,13 +848,13 @@
                 }
             }
             
-            // --- Logika Progres Guru ---
+            // --- Logika Progres Guru (Tabel) ---
             function initializeProgressSection() {
-                const progressContainer = document.getElementById('progress-container');
+                const progressTableBody = document.getElementById('progress-table-body');
                 const overallProgressCircle = document.getElementById('overall-progress-circle');
-                if (!progressContainer || !overallProgressCircle) return;
+                if (!progressTableBody || !overallProgressCircle) return;
                 
-                progressContainer.innerHTML = '<p class="text-center md:col-span-2 lg:col-span-4 text-gray-500">Memuat data progres guru...</p>';
+                progressTableBody.innerHTML = '<tr><td colspan="6" class="px-6 py-8 text-center text-gray-500">Memuat data progres guru...</td></tr>';
                 overallProgressCircle.style.background = `radial-gradient(closest-side, #f9fafb 79%, transparent 80% 100%), conic-gradient(#e5e7eb 360deg, #e5e7eb 0)`;
 
                 const scriptURL = 'https://script.google.com/macros/s/AKfycbyrSy2Xs4ajkjGh2u-CL8Jv-Kef6MkL58DBnS_ye2mmgjnCGI2pNtpWboSFkVwhz1wl/exec';
@@ -753,54 +882,188 @@
                                 const progress = Math.round((completedCount / adminKeys.length) * 100);
                                 return {
                                     name: teacher.Nama,
+                                    nip: teacher.NIP || '-',
                                     status: teacher.Status,
-                                    progress: progress
+                                    progress: progress,
+                                    completedCount: completedCount,
+                                    totalCount: adminKeys.length
                                 };
                             }).filter(teacher => teacher.name); // Filter out rows without a name
 
                             renderOverallProgress(teacherProgressData);
-                            renderIndividualProgressCards(teacherProgressData);
+                            renderProgressTable(teacherProgressData);
                         } else {
                            throw new Error('No data received from the source.');
                         }
                     })
                     .catch(error => {
                         console.error('Error fetching live data:', error);
-                        const progressSection = document.getElementById('progres');
-                        if(progressSection){
-                            const fallbackMessage = document.createElement('p');
-                            fallbackMessage.id = 'fallback-message';
-                            fallbackMessage.className = "text-center text-sm text-amber-700 bg-amber-100 p-3 rounded-lg mb-6 max-w-7xl mx-auto";
-                            fallbackMessage.textContent = 'Tidak dapat memuat data progres live. Menampilkan data statis sebagai gantinya.';
-                            
-                            // Hindari duplikasi pesan
-                            if (!document.getElementById('fallback-message')) {
-                                progressContainer.insertAdjacentElement('beforebegin', fallbackMessage);
-                            }
-                        }
-                        renderFallbackData();
+                        renderFallbackDataTable();
                     });
             }
 
-            function renderFallbackData() {
-                 const fallbackTeachers = [
+            function renderFallbackDataTable() {
+                const fallbackTeachers = [
                     // PNS
-                    { name: 'Dra. Sri Mularsih', status: 'PNS' }, { name: 'Drs. Fiva Widiarto', status: 'PNS' }, { name: 'Wahyu Budi Susapti, S.Pd, MM.', status: 'PNS' }, { name: 'Marwoto, S.Pd, S.Kom', status: 'PNS' }, { name: 'Sri Endah Swarastuti, S.Pd', status: 'PNS' }, { name: 'Dra. Cukat Budi Rahayu', status: 'PNS' }, { name: 'Dra. Diah Ayu Supriyanti', status: 'PNS' }, { name: 'Justina Trirahaju Leksanawati, S.Pd., M.Si.', status: 'PNS' }, { name: 'Sri Wahyuni, S.Pd', status: 'PNS' }, { name: 'Dwi Agus Tri M.M., S.Pd', status: 'PNS' }, { name: 'Sumardi, S.Pd., S.Kom', status: 'PNS' }, { name: 'Agung Pamuji, S.Pd', status: 'PNS' }, { name: 'Retnowati, S.Pd', status: 'PNS' }, { name: 'Tony Eka Martin Wibowo, S.Si.', status: 'PNS' }, { name: 'Nur Romlah, S.Pd', status: 'PNS' }, { name: 'Deddy Suwito, S.Kom', status: 'PNS' }, { name: 'Agus Wuryanto, S.Pd', status: 'PNS' }, { name: 'Tri Puji Utami, S.Kom', status: 'PNS' }, { name: 'Puji Pertiwi Sayekti, S.Pd', status: 'PNS' }, { name: 'Nur Fajriyahti, S.Pd.', status: 'PNS' }, { name: 'Srirahayu, S.Pd.', status: 'PNS' }, { name: 'Romidin, S.Pd', status: 'PNS' }, { name: 'Teguh Cahyono, S.Pd.', status: 'PNS' }, { name: 'Seto Eko Purwanto, S.Si', status: 'PNS' }, { name: 'Nelly Amaliyah, S.Psi', status: 'PNS' }, { name: 'Satyo Nugroho, S.Kom.', status: 'PNS' }, { name: 'Suratno, S.Pd', status: 'PNS' }, { name: 'Vektor Realita Aditopo, S.Pd', status: 'PNS' }, { name: 'Adi Setiawan, S.Pd.', status: 'PNS' }, { name: 'Galih Tyas Anjari, S.Pd.', status: 'PNS' }, { name: 'Deti Lestiyorini, S.Pd.', status: 'PNS' }, { name: 'Mahzun, S.Pd I', status: 'PNS' }, { name: 'Sugeng Pitoyo, S.Pd.', status: 'PNS' }, { name: 'Asriyatun, S.Pd', status: 'PNS' }, { name: 'Nur Laeli, S.Pd', status: 'PNS' },
+                    { name: 'Dra. Sri Mularsih', nip: '196706201994122001', status: 'PNS' },
+                    { name: 'Drs. Fiva Widiarto', nip: '196510231996011002', status: 'PNS' },
+                    { name: 'Wahyu Budi Susapti, S.Pd, MM.', nip: '197207291997022002', status: 'PNS' },
+                    { name: 'Marwoto, S.Pd, S.Kom', nip: '196904082000121001', status: 'PNS' },
+                    { name: 'Sri Endah Swarastuti, S.Pd', nip: '197407022003122004', status: 'PNS' },
+                    { name: 'Dra. Cukat Budi Rahayu', nip: '196901121994032010', status: 'PNS' },
+                    { name: 'Dra. Diah Ayu Supriyanti', nip: '196603261994122004', status: 'PNS' },
+                    { name: 'Justina Trirahaju Leksanawati, S.Pd., M.Si.', nip: '197104162003122006', status: 'PNS' },
+                    { name: 'Sri Wahyuni, S.Pd', nip: '197008022002122004', status: 'PNS' },
+                    { name: 'Dwi Agus Tri M.M., S.Pd', nip: '197102232002122004', status: 'PNS' },
+                    { name: 'Sumardi, S.Pd., S.Kom', nip: '197305272003121002', status: 'PNS' },
+                    { name: 'Agung Pamuji, S.Pd', nip: '197402132005011008', status: 'PNS' },
+                    { name: 'Retnowati, S.Pd', nip: '197303272005012009', status: 'PNS' },
+                    { name: 'Tony Eka Martin Wibowo, S.Si.', nip: '197912092005011004', status: 'PNS' },
+                    { name: 'Nur Romlah, S.Pd', nip: '197509082008012008', status: 'PNS' },
+                    { name: 'Deddy Suwito, S.Kom', nip: '197209022006041013', status: 'PNS' },
+                    { name: 'Agus Wuryanto, S.Pd', nip: '197503222006041002', status: 'PNS' },
+                    { name: 'Tri Puji Utami, S.Kom', nip: '198304252009032009', status: 'PNS' },
+                    { name: 'Puji Pertiwi Sayekti, S.Pd', nip: '196805102005012011', status: 'PNS' },
+                    { name: 'Nur Fajriyahti, S.Pd.', nip: '197005212007012014', status: 'PNS' },
+                    { name: 'Srirahayu, S.Pd.', nip: '197408042008012009', status: 'PNS' },
+                    { name: 'Romidin, S.Pd', nip: '197505052008011021', status: 'PNS' },
+                    { name: 'Teguh Cahyono, S.Pd.', nip: '198110232006041010', status: 'PNS' },
+                    { name: 'Seto Eko Purwanto, S.Si', nip: '197804232010011009', status: 'PNS' },
+                    { name: 'Nelly Amaliyah, S.Psi', nip: '197907032010012019', status: 'PNS' },
+                    { name: 'Satyo Nugroho, S.Kom.', nip: '197807142009031006', status: 'PNS' },
+                    { name: 'Suratno, S.Pd', nip: '198409032010011012', status: 'PNS' },
+                    { name: 'Vektor Realita Aditopo, S.Pd', nip: '198603312011011003', status: 'PNS' },
+                    { name: 'Adi Setiawan, S.Pd.', nip: '199012292014021001', status: 'PNS' },
+                    { name: 'Galih Tyas Anjari, S.Pd.', nip: '199201212014022001', status: 'PNS' },
+                    { name: 'Deti Lestiyorini, S.Pd.', nip: '198912142014022001', status: 'PNS' },
+                    { name: 'Mahzun, S.Pd I', nip: '197601072008011009', status: 'PNS' },
+                    { name: 'Sugeng Pitoyo, S.Pd.', nip: '197311032008011002', status: 'PNS' },
+                    { name: 'Asriyatun, S.Pd', nip: '199208262020122009', status: 'PNS' },
+                    { name: 'Nur Laeli, S.Pd', nip: '199704112020122011', status: 'PNS' },
                     // PPPK
-                    { name: 'Sepudin Zupri, S.Kom', status: 'PPPK' }, { name: 'Arif Nurokhman, S.Pd', status: 'PPPK' }, { name: 'Elis Sugiarti, S.Pd.', status: 'PPPK' }, { name: 'Sudiyarti, S.Pd', status: 'PPPK' }, { name: 'Otiah, S.Pd.', status: 'PPPK' }, { name: 'Novaristya Widyasmara Pamungkas, S.Pd', status: 'PPPK' }, { name: 'Menik Yuni Hartini, S.Pd.', status: 'PPPK' }, { name: 'Baiq Nur Aisyah, S.Pd.', status: 'PPPK' }, { name: 'Sulistiono, S.Pd.', status: 'PPPK' }, { name: 'Isria Rizqona Firdausyi, S.Pd.', status: 'PPPK' }, { name: 'Hindun Fatmawati, S.Pd.', status: 'PPPK' }, { name: 'Ana Nurlatifah, S.Pd.', status: 'PPPK' }, { name: 'Dwi Inayah Rahmawati, M.Pd.', status: 'PPPK' }, { name: 'Danu Dwi Jatmiko, S.Pd.', status: 'PPPK' }, { name: 'Restu Afri Widhi Hastutiningsih, S.Pd.', status: 'PPPK' }, { name: 'Nining Setiani, S.Pd.', status: 'PPPK' }, { name: 'Kukuh Pribadi, S.Pd.', status: 'PPPK' }, { name: 'Yekti Apriyoni, S.Pd.', status: 'PPPK' }, { name: 'Novita Adhimurti, S.Pd.', status: 'PPPK' }, { name: 'Khamsyatun Yudiana, S.Pd.I.', status: 'PPPK' }, { name: 'Nanang Cahyana, S.Pd.Ing.', status: 'PPPK' }, { name: 'Waskito Ismu Hastomo, S.Pd.', status: 'PPPK' }, { name: 'Lely Erawati, S.Pd.', status: 'PPPK' }, { name: 'Septian Endro Laksono, S.Pd.', status: 'PPPK' }, { name: 'Firmanika Rozaqi, S.Pd.', status: 'PPPK' }, { name: 'Devi Artati, S.Pd.', status: 'PPPK' }, { name: 'Soviatun Khasanah, S.Pd.', status: 'PPPK' }, { name: 'Miftah Iskandar, S.Pd.', status: 'PPPK' }, { name: 'Dista Puspitasari Adi, S.Pd.', status: 'PPPK' }, { name: 'Rita Wijiarti, S.Pd.', status: 'PPPK' }, { name: 'Safa Aulia Astri, S.Sos', status: 'PPPK' }, { name: 'Agus Sutono, S.Pd.', status: 'PPPK' }, { name: 'Yanti Karadina, S.Pd.', status: 'PPPK' }, { name: 'Widia Sukaesih, S.E.', status: 'PPPK' }, { name: 'Triyanto, S.Pd.', status: 'PPPK' }, { name: 'Inayatul Munawaroh, S.Pd.', status: 'PPPK' }, { name: 'Danu Setio Aji, S.Pd.', status: 'PPPK' }, { name: 'Hera Dwi Suryandari, S.Pd.', status: 'PPPK' },
+                    { name: 'Sepudin Zupri, S.Kom', nip: '197010222022211001', status: 'PPPK' },
+                    { name: 'Arif Nurokhman, S.Pd', nip: '198010172022211002', status: 'PPPK' },
+                    { name: 'Elis Sugiarti, S.Pd.', nip: '198503072022212028', status: 'PPPK' },
+                    { name: 'Sudiyarti, S.Pd', nip: '198511182022212012', status: 'PPPK' },
+                    { name: 'Otiah, S.Pd.', nip: '198802242022212013', status: 'PPPK' },
+                    { name: 'Novaristya Widyasmara Pamungkas, S.Pd', nip: '198811042022211004', status: 'PPPK' },
+                    { name: 'Menik Yuni Hartini, S.Pd.', nip: '198906292022212008', status: 'PPPK' },
+                    { name: 'Baiq Nur Aisyah, S.Pd.', nip: '198909222022212005', status: 'PPPK' },
+                    { name: 'Sulistiono, S.Pd.', nip: '199112202022211007', status: 'PPPK' },
+                    { name: 'Isria Rizqona Firdausyi, S.Pd.', nip: '199201312022212011', status: 'PPPK' },
+                    { name: 'Hindun Fatmawati, S.Pd.', nip: '199210042022212007', status: 'PPPK' },
+                    { name: 'Ana Nurlatifah, S.Pd.', nip: '199304032022212014', status: 'PPPK' },
+                    { name: 'Dwi Inayah Rahmawati, M.Pd.', nip: '199311282022212011', status: 'PPPK' },
+                    { name: 'Danu Dwi Jatmiko, S.Pd.', nip: '199401192022211003', status: 'PPPK' },
+                    { name: 'Restu Afri Widhi Hastutiningsih, S.Pd.', nip: '199604032022212009', status: 'PPPK' },
+                    { name: 'Nining Setiani, S.Pd.', nip: '199610102022212008', status: 'PPPK' },
+                    { name: 'Kukuh Pribadi, S.Pd.', nip: '198610232022211006', status: 'PPPK' },
+                    { name: 'Yekti Apriyoni, S.Pd.', nip: '197804272023212002', status: 'PPPK' },
+                    { name: 'Novita Adhimurti, S.Pd.', nip: '197811142023212001', status: 'PPPK' },
+                    { name: 'Khamsyatun Yudiana, S.Pd.I.', nip: '198207132023212011', status: 'PPPK' },
+                    { name: 'Nanang Cahyana, S.Pd.Ing.', nip: '198603172023211003', status: 'PPPK' },
+                    { name: 'Waskito Ismu Hastomo, S.Pd.', nip: '198606092023211007', status: 'PPPK' },
+                    { name: 'Lely Erawati, S.Pd.', nip: '198708212023212018', status: 'PPPK' },
+                    { name: 'Septian Endro Laksono, S.Pd.', nip: '199009052023211004', status: 'PPPK' },
+                    { name: 'Firmanika Rozaqi, S.Pd.', nip: '199104242023212024', status: 'PPPK' },
+                    { name: 'Devi Artati, S.Pd.', nip: '199210112023212020', status: 'PPPK' },
+                    { name: 'Soviatun Khasanah, S.Pd.', nip: '199606302023212006', status: 'PPPK' },
+                    { name: 'Miftah Iskandar, S.Pd.', nip: '198512112023211006', status: 'PPPK' },
+                    { name: 'Dista Puspitasari Adi, S.Pd.', nip: '198603182024212004', status: 'PPPK' },
+                    { name: 'Rita Wijiarti, S.Pd.', nip: '199410172024212021', status: 'PPPK' },
+                    { name: 'Safa Aulia Astri, S.Sos', nip: '199607212024212021', status: 'PPPK' },
+                    { name: 'Agus Sutono, S.Pd.', nip: '197406182025211007', status: 'PPPK' },
+                    { name: 'Yanti Karadina, S.Pd.', nip: '197512172025212006', status: 'PPPK' },
+                    { name: 'Widia Sukaesih, S.E.', nip: '197810082025212008', status: 'PPPK' },
+                    { name: 'Triyanto, S.Pd.', nip: '198411252025211021', status: 'PPPK' },
+                    { name: 'Inayatul Munawaroh, S.Pd.', nip: '199301062025212023', status: 'PPPK' },
+                    { name: 'Danu Setio Aji, S.Pd.', nip: '199310162025211021', status: 'PPPK' },
+                    { name: 'Hera Dwi Suryandari, S.Pd.', nip: '199312262025212012', status: 'PPPK' },
                     // GTT
-                    { name: 'Slamet Suparman, S.Pd.', status: 'GTT' }, { name: 'Devi Dwi Wahyuni, S.Pd.', status: 'GTT' }, { name: 'Muhammad Idris Afandi, S.S., M.Pd.', status: 'GTT' },
+                    { name: 'Slamet Suparman, S.Pd.', nip: '-', status: 'GTT' },
+                    { name: 'Devi Dwi Wahyuni, S.Pd.', nip: '-', status: 'GTT' },
+                    { name: 'Muhammad Idris Afandi, S.S., M.Pd.', nip: '-', status: 'GTT' },
                     // Kontrak
-                    { name: 'Rindhi Rezqi Hertindha, M.Pd.', status: 'Kontrak' }, { name: 'Seli Fadriyah, S.Pd.', status: 'Kontrak' }, { name: 'Nurhidayah, S.S., M.Pd.', status: 'Kontrak' }, { name: 'Prana Prakasita, S.Pd.', status: 'Kontrak' }, { name: 'Rita Puspitasari, S.Pd.', status: 'Kontrak' }, { name: 'Ullil Hykmah, S.Pd.', status: 'Kontrak' }
+                    { name: 'Rindhi Rezqi Hertindha, M.Pd.', nip: '-', status: 'Kontrak' },
+                    { name: 'Seli Fadriyah, S.Pd.', nip: '-', status: 'Kontrak' },
+                    { name: 'Nurhidayah, S.S., M.Pd.', nip: '-', status: 'Kontrak' },
+                    { name: 'Prana Prakasita, S.Pd.', nip: '-', status: 'Kontrak' },
+                    { name: 'Rita Puspitasari, S.Pd.', nip: '-', status: 'Kontrak' },
+                    { name: 'Ullil Hykmah, S.Pd.', nip: '-', status: 'Kontrak' }
                 ];
                 
                 const teacherProgressData = fallbackTeachers.map(teacher => ({
                     ...teacher,
-                    progress: Math.floor(Math.random() * 81) + 20 // Random progress 20-100%
+                    progress: Math.floor(Math.random() * 81) + 20, // Random progress 20-100%
+                    completedCount: Math.floor(Math.random() * 9) + 1, // Random 1-9 dokumen selesai
+                    totalCount: 9
                 }));
 
                 renderOverallProgress(teacherProgressData);
-                renderIndividualProgressCards(teacherProgressData);
+                renderProgressTable(teacherProgressData);
+            }
+
+            function renderProgressTable(teacherData) {
+                const container = document.getElementById('progress-table-body');
+                if (!container) return;
+
+                // Urutkan berdasarkan nama
+                teacherData.sort((a, b) => a.name.localeCompare(b.name));
+
+                let tableHTML = '';
+                if (teacherData.length === 0) {
+                    tableHTML = '<tr><td colspan="6" class="px-6 py-8 text-center text-gray-500">Tidak ada data guru untuk ditampilkan.</td></tr>';
+                } else {
+                    teacherData.forEach((teacher, index) => {
+                        const progress = teacher.progress;
+                        let progressColor = 'bg-green-500';
+                        let statusColor = 'bg-green-100 text-green-800';
+                        
+                        if (progress < 50) {
+                            progressColor = 'bg-red-500';
+                            statusColor = 'bg-red-100 text-red-800';
+                        } else if (progress < 90) {
+                            progressColor = 'bg-yellow-500';
+                            statusColor = 'bg-yellow-100 text-yellow-800';
+                        }
+
+                        // Link Google Spreadsheet untuk setiap guru
+                        // Ganti YOUR_SPREADSHEET_ID dengan ID spreadsheet Google Sheets Anda
+                        const spreadsheetURL = `https://docs.google.com/spreadsheets/d/YOUR_SPREADSHEET_ID/edit#gid=0&range=A${index + 2}`;
+
+                        tableHTML += `
+                            <tr class="hover:bg-gray-50 transition-colors">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${index + 1}</td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm font-medium text-gray-900">${teacher.name}</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm text-gray-500">${teacher.nip}</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full ${statusColor}">
+                                        ${teacher.status}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        <div class="w-full bg-gray-200 rounded-full h-2.5 mr-2">
+                                            <div class="${progressColor} h-2.5 rounded-full" style="width: ${progress}%"></div>
+                                        </div>
+                                        <span class="text-sm font-medium text-gray-700">${progress}%</span>
+                                    </div>
+                                    <div class="text-xs text-gray-500 mt-1">${teacher.completedCount || 0}/${teacher.totalCount || 9} dokumen</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                    <a href="${spreadsheetURL}" target="_blank" class="text-blue-600 hover:text-blue-900 transition-colors">
+                                        Lihat Detail
+                                    </a>
+                                </td>
+                            </tr>
+                        `;
+                    });
+                }
+                container.innerHTML = tableHTML;
             }
 
             function renderOverallProgress(teacherData) {
@@ -817,42 +1080,200 @@
                 }
             }
 
-            function renderIndividualProgressCards(teacherData) {
-                const container = document.getElementById('progress-container');
-                if (!container) return;
+            // --- Fitur Pencarian ---
+            const searchToggle = document.getElementById('search-toggle');
+            const mobileSearchToggle = document.getElementById('mobile-search-toggle');
+            const searchModal = document.getElementById('search-modal');
+            const closeSearch = document.getElementById('close-search');
+            const searchInput = document.getElementById('search-input');
+            const searchResults = document.getElementById('search-results');
 
-                // Urutkan berdasarkan nama
-                teacherData.sort((a, b) => a.name.localeCompare(b.name));
+            function openSearchModal() {
+                searchModal.classList.remove('hidden');
+                searchInput.focus();
+            }
 
-                let cardHTML = '';
-                if (teacherData.length === 0) {
-                    container.innerHTML = '<p class="text-center md:col-span-2 lg:col-span-4 text-gray-500">Tidak ada data guru untuk ditampilkan.</p>';
+            function closeSearchModal() {
+                searchModal.classList.add('hidden');
+                searchInput.value = '';
+                searchResults.classList.add('hidden');
+                searchResults.innerHTML = '';
+            }
+
+            searchToggle.addEventListener('click', openSearchModal);
+            mobileSearchToggle.addEventListener('click', openSearchModal);
+            closeSearch.addEventListener('click', closeSearchModal);
+
+            // Pencarian dokumen
+            searchInput.addEventListener('input', function() {
+                const query = this.value.toLowerCase().trim();
+                
+                if (query.length < 2) {
+                    searchResults.classList.add('hidden');
+                    searchResults.innerHTML = '';
                     return;
                 }
                 
-                teacherData.forEach(teacher => {
-                    const progress = teacher.progress;
-                    let progressBarColor = 'bg-green-500';
-                    if (progress < 50) {
-                        progressBarColor = 'bg-red-500';
-                    } else if (progress < 90) {
-                        progressBarColor = 'bg-yellow-500';
+                // Cari di semua kartu perangkat ajar
+                const cards = document.querySelectorAll('.card');
+                let resultsHTML = '';
+                let resultCount = 0;
+                
+                cards.forEach(card => {
+                    const title = card.querySelector('h3').textContent.toLowerCase();
+                    const description = card.querySelector('p').textContent.toLowerCase();
+                    const link = card.querySelector('a').getAttribute('href');
+                    
+                    if (title.includes(query) || description.includes(query)) {
+                        resultCount++;
+                        resultsHTML += `
+                            <a href="${link}" target="_blank" class="block p-3 hover:bg-gray-100 rounded-lg transition-colors">
+                                <h4 class="font-semibold text-gray-800">${card.querySelector('h3').textContent}</h4>
+                                <p class="text-sm text-gray-600 mt-1">${card.querySelector('p').textContent}</p>
+                            </a>
+                        `;
                     }
-
-                    cardHTML += `
-                        <div class="bg-white p-5 rounded-lg shadow-md border border-gray-200 hover:shadow-lg transition-shadow duration-300">
-                            <p class="font-semibold text-gray-800 truncate" title="${teacher.name}">${teacher.name}</p>
-                            <p class="text-xs text-gray-500 mb-3">${teacher.status || 'N/A'}</p>
-                            <div class="w-full bg-gray-200 rounded-full h-2.5 mb-1">
-                                <div class="${progressBarColor} h-2.5 rounded-full" style="width: ${progress}%"></div>
-                            </div>
-                            <p class="text-right text-sm font-medium text-gray-700">${progress}% Selesai</p>
-                        </div>
-                    `;
                 });
-                container.innerHTML = cardHTML;
+                
+                if (resultCount > 0) {
+                    searchResults.innerHTML = `
+                        <p class="text-sm text-gray-500 mb-2">Ditemukan ${resultCount} hasil:</p>
+                        ${resultsHTML}
+                    `;
+                    searchResults.classList.remove('hidden');
+                } else {
+                    searchResults.innerHTML = '<p class="text-sm text-gray-500">Tidak ada hasil yang ditemukan.</p>';
+                    searchResults.classList.remove('hidden');
+                }
+            });
+
+            // --- Fitur Filter Kategori ---
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            const perangkatContainer = document.getElementById('perangkat-container');
+            const cards = document.querySelectorAll('.card');
+
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Hapus kelas aktif dari semua tombol
+                    filterButtons.forEach(btn => btn.classList.remove('active', 'bg-blue-600', 'text-white'));
+                    filterButtons.forEach(btn => btn.classList.add('bg-gray-200', 'text-gray-700'));
+                    
+                    // Tambah kelas aktif ke tombol yang diklik
+                    this.classList.remove('bg-gray-200', 'text-gray-700');
+                    this.classList.add('active', 'bg-blue-600', 'text-white');
+                    
+                    const filter = this.getAttribute('data-filter');
+                    
+                    cards.forEach(card => {
+                        if (filter === 'all' || card.getAttribute('data-category') === filter) {
+                            card.style.display = 'block';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+                });
+            });
+
+            // --- Fitur Mode Gelap ---
+            const darkModeToggle = document.getElementById('dark-mode-toggle');
+            const mobileDarkModeToggle = document.getElementById('mobile-dark-mode-toggle');
+            const darkModeIcon = darkModeToggle.querySelector('i');
+            const mobileDarkModeIcon = mobileDarkModeToggle.querySelector('i');
+
+            function toggleDarkMode() {
+                document.body.classList.toggle('dark-mode');
+                
+                if (document.body.classList.contains('dark-mode')) {
+                    darkModeIcon.classList.remove('fa-moon');
+                    darkModeIcon.classList.add('fa-sun');
+                    mobileDarkModeIcon.classList.remove('fa-moon');
+                    mobileDarkModeIcon.classList.add('fa-sun');
+                    localStorage.setItem('darkMode', 'enabled');
+                } else {
+                    darkModeIcon.classList.remove('fa-sun');
+                    darkModeIcon.classList.add('fa-moon');
+                    mobileDarkModeIcon.classList.remove('fa-sun');
+                    mobileDarkModeIcon.classList.add('fa-moon');
+                    localStorage.setItem('darkMode', 'disabled');
+                }
             }
 
+            // Cek preferensi mode gelap dari localStorage
+            if (localStorage.getItem('darkMode') === 'enabled') {
+                document.body.classList.add('dark-mode');
+                darkModeIcon.classList.remove('fa-moon');
+                darkModeIcon.classList.add('fa-sun');
+                mobileDarkModeIcon.classList.remove('fa-moon');
+                mobileDarkModeIcon.classList.add('fa-sun');
+            }
+
+            darkModeToggle.addEventListener('click', toggleDarkMode);
+            mobileDarkModeToggle.addEventListener('click', toggleDarkMode);
+
+            // --- Fitur Notifikasi ---
+            const notification = document.getElementById('notification');
+            const closeNotification = document.getElementById('close-notification');
+            const notificationIcon = document.getElementById('notification-icon');
+            const notificationTitle = document.getElementById('notification-title');
+            const notificationMessage = document.getElementById('notification-message');
+
+            function showNotification(title, message, type = 'info') {
+                notificationTitle.textContent = title;
+                notificationMessage.textContent = message;
+                
+                // Set ikon berdasarkan jenis notifikasi
+                const icon = notificationIcon.querySelector('i');
+                icon.className = ''; // Reset kelas
+                
+                if (type === 'success') {
+                    icon.classList.add('fas', 'fa-check-circle', 'text-green-500', 'text-xl');
+                } else if (type === 'warning') {
+                    icon.classList.add('fas', 'fa-exclamation-triangle', 'text-yellow-500', 'text-xl');
+                } else if (type === 'error') {
+                    icon.classList.add('fas', 'fa-times-circle', 'text-red-500', 'text-xl');
+                } else {
+                    icon.classList.add('fas', 'fa-info-circle', 'text-blue-500', 'text-xl');
+                }
+                
+                notification.classList.remove('hidden', 'translate-x-full');
+                notification.classList.add('translate-x-0');
+                
+                // Auto hide setelah 5 detik
+                setTimeout(() => {
+                    hideNotification();
+                }, 5000);
+            }
+
+            function hideNotification() {
+                notification.classList.remove('translate-x-0');
+                notification.classList.add('translate-x-full');
+                
+                setTimeout(() => {
+                    notification.classList.add('hidden');
+                }, 300);
+            }
+
+            closeNotification.addEventListener('click', hideNotification);
+
+            // --- Fitur Tombol Kembali ke Atas ---
+            const backToTopButton = document.getElementById('back-to-top');
+
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 300) {
+                    backToTopButton.classList.remove('opacity-0');
+                    backToTopButton.classList.add('opacity-100');
+                } else {
+                    backToTopButton.classList.remove('opacity-100');
+                    backToTopButton.classList.add('opacity-0');
+                }
+            });
+
+            backToTopButton.addEventListener('click', () => {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
 
             window.addEventListener('scroll', () => {
                 changeHeaderStyle();
@@ -870,4 +1291,3 @@
     </script>
 </body>
 </html>
-
