@@ -203,6 +203,86 @@
         .history-link:hover {
             color: #3b82f6;
         }
+        
+        /* Style untuk grafik batang */
+        .chart-container {
+            height: 600px;
+            overflow-y: auto;
+            padding: 1rem;
+        }
+        
+        .chart-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .chart-label {
+            width: 200px;
+            padding-right: 1rem;
+            text-align: right;
+            font-size: 0.875rem;
+        }
+        
+        .chart-bar-container {
+            flex-grow: 1;
+            height: 30px;
+            background-color: #e5e7eb;
+            border-radius: 0.25rem;
+            position: relative;
+        }
+        
+        .chart-bar {
+            height: 100%;
+            border-radius: 0.25rem;
+            transition: width 1s ease;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .chart-bar:hover {
+            opacity: 0.8;
+        }
+        
+        .chart-percentage {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: white;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+        
+        .chart-count {
+            width: 60px;
+            padding-left: 1rem;
+            text-align: center;
+            font-size: 0.875rem;
+        }
+        
+        /* Style untuk modal detail guru */
+        .detail-modal-content {
+            max-width: 800px;
+            width: 90%;
+        }
+        
+        .doc-card {
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        .doc-card.completed {
+            border-color: #10b981;
+            background-color: #f0fdf4;
+        }
+        
+        .doc-card.pending {
+            border-color: #e5e7eb;
+            background-color: #f9fafb;
+        }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800">
@@ -581,9 +661,32 @@
                     </div>
                 </div>
 
-                <!-- Kartu Progress Guru (Berbaris) -->
-                <div id="progress-cards-container" class="max-w-6xl mx-auto space-y-6">
-                    <!-- Kartu progress akan di-generate oleh JavaScript -->
+                <!-- Grafik Batang Progress Guru -->
+                <div class="max-w-6xl mx-auto bg-white rounded-lg shadow-md p-6 mb-8">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-xl font-bold text-gray-800">Grafik Progress Administrasi Guru</h3>
+                        <div class="flex items-center space-x-4">
+                            <div class="flex items-center">
+                                <div class="w-4 h-4 bg-green-500 rounded mr-2"></div>
+                                <span class="text-sm text-gray-600">100%</span>
+                            </div>
+                            <div class="flex items-center">
+                                <div class="w-4 h-4 bg-blue-500 rounded mr-2"></div>
+                                <span class="text-sm text-gray-600">70-99%</span>
+                            </div>
+                            <div class="flex items-center">
+                                <div class="w-4 h-4 bg-yellow-500 rounded mr-2"></div>
+                                <span class="text-sm text-gray-600">50-69%</span>
+                            </div>
+                            <div class="flex items-center">
+                                <div class="w-4 h-4 bg-red-500 rounded mr-2"></div>
+                                <span class="text-sm text-gray-600">&lt;50%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="chart-container" class="chart-container">
+                        <!-- Grafik akan di-generate oleh JavaScript -->
+                    </div>
                 </div>
 
                 <!-- Loading State -->
@@ -593,220 +696,7 @@
                 </div>
             </div>
         </section>
-// Tambahkan fungsi ini di dalam tag <script> yang sudah ada
 
-function renderProgressChart(teacherData) {
-    const chartContainer = document.getElementById('chart-container');
-    if (!chartContainer) return;
-
-    // Urutkan berdasarkan progress (terendah ke tertinggi untuk visualisasi yang lebih baik)
-    const sortedData = [...teacherData].sort((a, b) => a.progress - b.progress);
-    
-    let chartHTML = '<div class="space-y-4">';
-    
-    sortedData.forEach((teacher, index) => {
-        const progress = teacher.progress;
-        let barColor = 'bg-red-500';
-        
-        if (progress === 100) {
-            barColor = 'bg-green-500';
-        } else if (progress >= 70) {
-            barColor = 'bg-blue-500';
-        } else if (progress >= 50) {
-            barColor = 'bg-yellow-500';
-        }
-        
-        chartHTML += `
-            <div class="flex items-center">
-                <div class="w-48 pr-4 text-right">
-                    <p class="font-medium text-gray-800 truncate" title="${teacher.name}">${teacher.name}</p>
-                    <p class="text-xs text-gray-500">${teacher.status}</p>
-                </div>
-                <div class="flex-1">
-                    <div class="relative">
-                        <div class="w-full bg-gray-200 rounded-full h-8">
-                            <div class="${barColor} h-8 rounded-full transition-all duration-500 hover:opacity-80 cursor-pointer relative" 
-                                 style="width: ${progress}%" 
-                                 data-teacher-index="${teacherData.findIndex(t => t.name === teacher.name)}"
-                                 onclick="showTeacherDetail(${teacherData.findIndex(t => t.name === teacher.name)})">
-                                <span class="absolute right-2 top-1/2 transform -translate-y-1/2 text-white text-sm font-medium">
-                                    ${progress}%
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="w-20 pl-4 text-center">
-                    <p class="text-sm text-gray-600">${teacher.completedCount}/${teacher.totalCount}</p>
-                </div>
-            </div>
-        `;
-    });
-    
-    chartHTML += '</div>';
-    chartContainer.innerHTML = chartHTML;
-}
-
-function showTeacherDetail(teacherIndex) {
-    const teacherData = window.currentTeacherData;
-    if (!teacherData || teacherIndex < 0 || teacherIndex >= teacherData.length) return;
-    
-    const teacher = teacherData[teacherIndex];
-    const modal = document.getElementById('teacher-detail-modal');
-    const content = document.getElementById('teacher-detail-content');
-    
-    let documentsHTML = '<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">';
-    
-    teacher.documents.forEach(doc => {
-        const statusClass = doc.completed ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800';
-        const statusIcon = doc.completed ? '<i class="fas fa-check-circle"></i>' : '<i class="fas fa-times-circle"></i>';
-        
-        documentsHTML += `
-            <div class="border rounded-lg p-4 ${doc.completed ? 'border-green-300' : 'border-gray-300'}">
-                <div class="flex justify-between items-start mb-2">
-                    <h4 class="font-medium text-gray-800">${doc.name}</h4>
-                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${statusClass}">
-                        ${statusIcon} ${doc.completed ? 'Selesai' : 'Belum'}
-                    </span>
-                </div>
-                ${doc.completed ? `
-                    <div class="mt-2">
-                        ${doc.link ? `
-                            <a href="${doc.link}" target="_blank" class="text-blue-600 hover:text-blue-800 text-sm flex items-center">
-                                <i class="fas fa-external-link-alt mr-1"></i> Lihat Dokumen
-                            </a>
-                        ` : '<p class="text-gray-500 text-sm">Tidak ada link dokumen</p>'}
-                        ${doc.submittedDate ? `
-                            <p class="text-xs text-gray-500 mt-1">Dikumpulkan: ${new Date(doc.submittedDate).toLocaleDateString('id-ID')}</p>
-                        ` : ''}
-                        ${doc.notes ? `
-                            <p class="text-xs text-gray-600 mt-2 italic">Catatan: ${doc.notes}</p>
-                        ` : ''}
-                    </div>
-                ` : `
-                    <button onclick="openSubmitModal('${teacher.name}', '${doc.name}')" class="mt-2 bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700 transition-colors">
-                        <i class="fas fa-upload mr-1"></i> Upload Dokumen
-                    </button>
-                `}
-            </div>
-        `;
-    });
-    
-    documentsHTML += '</div>';
-    
-    content.innerHTML = `
-        <div class="bg-gray-50 rounded-lg p-6">
-            <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
-                <div>
-                    <h4 class="text-xl font-bold text-gray-800">${teacher.name}</h4>
-                    <p class="text-gray-600">NIP: ${teacher.nip} | Status: ${teacher.status}</p>
-                </div>
-                <div class="mt-4 md:mt-0 text-center">
-                    <div class="text-3xl font-bold ${teacher.progress === 100 ? 'text-green-600' : 'text-blue-600'}">${teacher.progress}%</div>
-                    <p class="text-gray-600">Progress</p>
-                </div>
-            </div>
-            
-            <div class="w-full bg-gray-200 rounded-full h-4 mb-6">
-                <div class="h-4 rounded-full transition-all duration-500 ${
-                    teacher.progress === 100 ? 'bg-green-500' : 
-                    teacher.progress >= 70 ? 'bg-blue-500' : 
-                    teacher.progress >= 50 ? 'bg-yellow-500' : 'bg-red-500'
-                }" style="width: ${teacher.progress}%"></div>
-            </div>
-            
-            <h5 class="text-lg font-semibold text-gray-800 mb-3">Status Dokumen:</h5>
-            ${documentsHTML}
-        </div>
-    `;
-    
-    modal.classList.add('show');
-}
-
-// Tambahkan event listener untuk menutup modal detail
-document.addEventListener('DOMContentLoaded', function() {
-    // ... kode yang sudah ada ...
-    
-    // Tambahkan event listener untuk modal detail
-    const closeDetailModalBtn = document.getElementById('close-detail-modal');
-    const teacherDetailModal = document.getElementById('teacher-detail-modal');
-    
-    if (closeDetailModalBtn) {
-        closeDetailModalBtn.addEventListener('click', () => {
-            teacherDetailModal.classList.remove('show');
-        });
-    }
-    
-    if (teacherDetailModal) {
-        teacherDetailModal.addEventListener('click', (e) => {
-            if (e.target === teacherDetailModal) {
-                teacherDetailModal.classList.remove('show');
-            }
-        });
-    }
-    
-    // Modifikasi fungsi initializeProgressSection untuk menggunakan grafik batang
-    function initializeProgressSection() {
-        const progressCardsContainer = document.getElementById('progress-cards-container');
-        if (!progressCardsContainer) return;
-        
-        progressCardsContainer.innerHTML = '<div class="text-center py-8 text-gray-500">Memuat data progres guru...</div>';
-
-        fetchProgressData()
-            .then(data => {
-                if (data && data.length > 0) {
-                    const teacherProgressData = processTeacherData(data);
-                    window.currentTeacherData = teacherProgressData; // Simpan data untuk akses global
-                    renderProgressChart(teacherProgressData);
-                    renderOverallProgress(teacherProgressData);
-                    setupFiltersAndSearch(teacherProgressData);
-                    updateLastUpdateTime();
-                } else {
-                   throw new Error('No data received from the source.');
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching live data:', error);
-                renderFallbackProgressChart();
-            });
-    }
-    
-    // Modifikasi fungsi renderFilteredProgressCards untuk menggunakan grafik batang
-    function renderFilteredProgressCards(teacherData, filter = 'all', searchQuery = '') {
-        // Filter data
-        let filteredData = teacherData;
-        
-        if (filter !== 'all') {
-            filteredData = teacherData.filter(teacher => teacher.status === filter);
-        }
-        
-        if (searchQuery) {
-            const query = searchQuery.toLowerCase();
-            filteredData = filteredData.filter(teacher => 
-                teacher.name.toLowerCase().includes(query)
-            );
-        }
-
-        // Update data global untuk fungsi showTeacherDetail
-        window.currentTeacherData = filteredData;
-        
-        // Render grafik batang dengan data yang difilter
-        renderProgressChart(filteredData);
-    }
-    
-    // Tambahkan fungsi renderFallbackProgressChart
-    function renderFallbackProgressChart() {
-        // Gunakan data fallback yang sama seperti sebelumnya
-        // ... kode fallback yang sudah ada ...
-        
-        // Setelah mendapatkan data fallback
-        window.currentTeacherData = teacherProgressData;
-        renderProgressChart(teacherProgressData);
-        renderOverallProgress(teacherProgressData);
-        setupFiltersAndSearch(teacherProgressData);
-        updateLastUpdateTime();
-    }
-});
         <!-- Bagian Download Center -->
         <section id="download" class="py-20 bg-gray-100">
             <div class="container mx-auto px-6">
@@ -1048,6 +938,22 @@ document.addEventListener('DOMContentLoaded', function() {
         </div>
     </div>
 
+    <!-- Modal Detail Guru -->
+    <div id="teacher-detail-modal" class="modal">
+        <div class="modal-content detail-modal-content">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold text-gray-800">Detail Administrasi Guru</h3>
+                <button id="close-detail-modal" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <div id="teacher-detail-content">
+                <!-- Konten detail akan di-generate oleh JavaScript -->
+            </div>
+        </div>
+    </div>
+
     <!-- Notification -->
     <div id="notification" class="notification"></div>
 
@@ -1257,16 +1163,17 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // --- Logika Progres Guru ---
             function initializeProgressSection() {
-                const progressCardsContainer = document.getElementById('progress-cards-container');
-                if (!progressCardsContainer) return;
+                const chartContainer = document.getElementById('chart-container');
+                if (!chartContainer) return;
                 
-                progressCardsContainer.innerHTML = '<div class="text-center py-8 text-gray-500">Memuat data progres guru...</div>';
+                chartContainer.innerHTML = '<div class="text-center py-8 text-gray-500">Memuat data progres guru...</div>';
 
                 fetchProgressData()
                     .then(data => {
                         if (data && data.length > 0) {
                             const teacherProgressData = processTeacherData(data);
-                            renderProgressCards(teacherProgressData);
+                            window.currentTeacherData = teacherProgressData; // Simpan data untuk akses global
+                            renderProgressChart(teacherProgressData);
                             renderOverallProgress(teacherProgressData);
                             setupFiltersAndSearch(teacherProgressData);
                             updateLastUpdateTime();
@@ -1276,7 +1183,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     })
                     .catch(error => {
                         console.error('Error fetching live data:', error);
-                        renderFallbackProgressCards();
+                        renderFallbackProgressChart();
                     });
             }
 
@@ -1356,80 +1263,128 @@ document.addEventListener('DOMContentLoaded', function() {
                 }).filter(teacher => teacher.name);
             }
 
-            function renderProgressCards(teacherData) {
-                const container = document.getElementById('progress-cards-container');
-                if (!container) return;
+            function renderProgressChart(teacherData) {
+                const chartContainer = document.getElementById('chart-container');
+                if (!chartContainer) return;
 
-                // Urutkan berdasarkan nama
-                teacherData.sort((a, b) => a.name.localeCompare(b.name));
-
-                let cardsHTML = '';
+                // Urutkan berdasarkan progress (terendah ke tertinggi untuk visualisasi yang lebih baik)
+                const sortedData = [...teacherData].sort((a, b) => a.progress - b.progress);
                 
-                teacherData.forEach((teacher, index) => {
+                let chartHTML = '';
+                
+                sortedData.forEach((teacher, index) => {
                     const progress = teacher.progress;
-
-                    cardsHTML += `
-                        <div class="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
-                            <div class="p-6">
-                                <!-- Header Kartu -->
-                                <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-6">
-                                    <div class="flex-1">
-                                        <h3 class="text-xl font-bold text-gray-800 mb-1">${teacher.name}</h3>
-                                        <div class="flex flex-col sm:flex-row sm:items-center sm:space-x-4 text-sm text-gray-600">
-                                            <span>NIP: ${teacher.nip}</span>
-                                            <span class="hidden sm:inline">•</span>
-                                            <span>Status: ${teacher.status}</span>
-                                            <span class="hidden sm:inline">•</span>
-                                            <span class="${progress === 100 ? 'text-green-600 font-medium' : 'text-gray-600'}">
-                                                ${progress}% Selesai (${teacher.completedCount}/${teacher.totalCount})
-                                            </span>
-                                        </div>
-                                    </div>
+                    let barColor = 'bg-red-500';
+                    
+                    if (progress === 100) {
+                        barColor = 'bg-green-500';
+                    } else if (progress >= 70) {
+                        barColor = 'bg-blue-500';
+                    } else if (progress >= 50) {
+                        barColor = 'bg-yellow-500';
+                    }
+                    
+                    chartHTML += `
+                        <div class="chart-row">
+                            <div class="chart-label">
+                                <p class="font-medium text-gray-800 truncate" title="${teacher.name}">${teacher.name}</p>
+                                <p class="text-xs text-gray-500">${teacher.status}</p>
+                            </div>
+                            <div class="chart-bar-container">
+                                <div class="${barColor} chart-bar" 
+                                     style="width: ${progress}%" 
+                                     data-teacher-index="${teacherData.findIndex(t => t.name === teacher.name)}"
+                                     onclick="showTeacherDetail(${teacherData.findIndex(t => t.name === teacher.name)})">
+                                    <span class="chart-percentage">${progress}%</span>
                                 </div>
-
-                                <!-- Progress Bar -->
-                                <div class="mb-6">
-                                    <div class="w-full bg-gray-200 rounded-full h-3">
-                                        <div class="bg-blue-600 h-3 rounded-full transition-all duration-500" style="width: ${progress}%"></div>
-                                    </div>
-                                </div>
-
-                                <!-- Link Dokumen (Versi Submit Button) -->
-                                <div class="mt-4">
-                                    <h4 class="text-lg font-semibold text-gray-800 mb-3">Status Pengumpulan Dokumen:</h4>
-                                    <div class="doc-container">
-                                        ${teacher.documents.map(doc => `
-                                            ${doc.completed ? `
-                                                <div class="doc-item inline-flex items-center px-2 py-1 rounded bg-green-100 text-green-800 group">
-                                                    <span class="text-xs font-medium">${doc.name}</span>
-                                                    <i class="fas fa-check-circle text-green-600 ml-1 text-xs"></i>
-                                                    ${doc.link ? `
-                                                        <a href="${doc.link}" target="_blank" class="ml-2 text-blue-600 hover:text-blue-800">
-                                                            <i class="fas fa-external-link-alt text-xs"></i>
-                                                        </a>
-                                                    ` : ''}
-                                                    ${doc.submittedDate ? `
-                                                        <span class="ml-2 text-xs text-gray-500">${new Date(doc.submittedDate).toLocaleDateString('id-ID')}</span>
-                                                    ` : ''}
-                                                </div>
-                                            ` : `
-                                                <button onclick="openSubmitModal('${teacher.name}', '${doc.name}')" class="doc-item inline-flex items-center px-2 py-1 rounded bg-gray-100 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-all duration-200 group">
-                                                    <span class="text-xs font-medium">${doc.name}</span>
-                                                    <i class="fas fa-upload ml-1 text-xs"></i>
-                                                </button>
-                                            `}
-                                        `).join('')}
-                                    </div>
-                                </div>
+                            </div>
+                            <div class="chart-count">
+                                ${teacher.completedCount}/${teacher.totalCount}
                             </div>
                         </div>
                     `;
                 });
-
-                container.innerHTML = cardsHTML;
+                
+                chartContainer.innerHTML = chartHTML;
             }
 
-            function renderFallbackProgressCards() {
+            function showTeacherDetail(teacherIndex) {
+                const teacherData = window.currentTeacherData;
+                if (!teacherData || teacherIndex < 0 || teacherIndex >= teacherData.length) return;
+                
+                const teacher = teacherData[teacherIndex];
+                const modal = document.getElementById('teacher-detail-modal');
+                const content = document.getElementById('teacher-detail-content');
+                
+                let documentsHTML = '';
+                
+                teacher.documents.forEach(doc => {
+                    const statusClass = doc.completed ? 'completed' : 'pending';
+                    const statusIcon = doc.completed ? '<i class="fas fa-check-circle text-green-600"></i>' : '<i class="fas fa-times-circle text-gray-400"></i>';
+                    
+                    documentsHTML += `
+                        <div class="doc-card ${statusClass}">
+                            <div class="flex justify-between items-start mb-2">
+                                <h4 class="font-medium text-gray-800">${doc.name}</h4>
+                                <span class="inline-flex items-center">
+                                    ${statusIcon}
+                                </span>
+                            </div>
+                            ${doc.completed ? `
+                                <div class="mt-2">
+                                    ${doc.link ? `
+                                        <a href="${doc.link}" target="_blank" class="text-blue-600 hover:text-blue-800 text-sm flex items-center">
+                                            <i class="fas fa-external-link-alt mr-1"></i> Lihat Dokumen
+                                        </a>
+                                    ` : '<p class="text-gray-500 text-sm">Tidak ada link dokumen</p>'}
+                                    ${doc.submittedDate ? `
+                                        <p class="text-xs text-gray-500 mt-1">Dikumpulkan: ${new Date(doc.submittedDate).toLocaleDateString('id-ID')}</p>
+                                    ` : ''}
+                                    ${doc.notes ? `
+                                        <p class="text-xs text-gray-600 mt-2 italic">Catatan: ${doc.notes}</p>
+                                    ` : ''}
+                                </div>
+                            ` : `
+                                <button onclick="openSubmitModal('${teacher.name}', '${doc.name}')" class="mt-2 bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700 transition-colors">
+                                    <i class="fas fa-upload mr-1"></i> Upload Dokumen
+                                </button>
+                            `}
+                        </div>
+                    `;
+                });
+                
+                content.innerHTML = `
+                    <div class="bg-gray-50 rounded-lg p-6">
+                        <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
+                            <div>
+                                <h4 class="text-xl font-bold text-gray-800">${teacher.name}</h4>
+                                <p class="text-gray-600">NIP: ${teacher.nip} | Status: ${teacher.status}</p>
+                            </div>
+                            <div class="mt-4 md:mt-0 text-center">
+                                <div class="text-3xl font-bold ${teacher.progress === 100 ? 'text-green-600' : 'text-blue-600'}">${teacher.progress}%</div>
+                                <p class="text-gray-600">Progress</p>
+                            </div>
+                        </div>
+                        
+                        <div class="w-full bg-gray-200 rounded-full h-4 mb-6">
+                            <div class="h-4 rounded-full transition-all duration-500 ${
+                                teacher.progress === 100 ? 'bg-green-500' : 
+                                teacher.progress >= 70 ? 'bg-blue-500' : 
+                                teacher.progress >= 50 ? 'bg-yellow-500' : 'bg-red-500'
+                            }" style="width: ${teacher.progress}%"></div>
+                        </div>
+                        
+                        <h5 class="text-lg font-semibold text-gray-800 mb-3">Status Dokumen:</h5>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            ${documentsHTML}
+                        </div>
+                    </div>
+                `;
+                
+                modal.classList.add('show');
+            }
+
+            function renderFallbackProgressChart() {
                 const fallbackTeachers = [
                     { name: 'Dra. Sri Mularsih', nip: '196706201994122001', status: 'PNS' },
                     { name: 'Drs. Fiva Widiarto', nip: '196510231996011002', status: 'PNS' },
@@ -1549,7 +1504,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     };
                 });
 
-                renderProgressCards(teacherProgressData);
+                window.currentTeacherData = teacherProgressData;
+                renderProgressChart(teacherProgressData);
                 renderOverallProgress(teacherProgressData);
                 setupFiltersAndSearch(teacherProgressData);
                 updateLastUpdateTime();
@@ -1609,7 +1565,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         this.classList.add('active', 'bg-blue-600', 'text-white');
                         
                         currentFilter = status;
-                        renderFilteredProgressCards(teacherData, currentFilter, currentSearch);
+                        renderFilteredProgressChart(teacherData, currentFilter, currentSearch);
                     });
                 });
                 
@@ -1617,15 +1573,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (searchInput) {
                     searchInput.addEventListener('input', function() {
                         currentSearch = this.value.trim();
-                        renderFilteredProgressCards(teacherData, currentFilter, currentSearch);
+                        renderFilteredProgressChart(teacherData, currentFilter, currentSearch);
                     });
                 }
             }
 
-            function renderFilteredProgressCards(teacherData, filter = 'all', searchQuery = '') {
-                const container = document.getElementById('progress-cards-container');
-                if (!container) return;
-
+            function renderFilteredProgressChart(teacherData, filter = 'all', searchQuery = '') {
                 // Filter data
                 let filteredData = teacherData;
                 
@@ -1640,95 +1593,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     );
                 }
 
-                // Urutkan berdasarkan progress (tertinggi ke terendah)
-                filteredData.sort((a, b) => b.progress - a.progress);
-
-                let cardsHTML = '';
+                // Update data global untuk fungsi showTeacherDetail
+                window.currentTeacherData = filteredData;
                 
-                if (filteredData.length === 0) {
-                    cardsHTML = `
-                        <div class="text-center py-12">
-                            <svg class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                            <p class="text-gray-500 text-lg">Tidak ada data yang ditemukan</p>
-                        </div>
-                    `;
-                } else {
-                    filteredData.forEach((teacher, index) => {
-                        const progress = teacher.progress;
-
-                        cardsHTML += `
-                            <div class="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden hover:shadow-lg transition-all duration-300" data-teacher="${teacher.name}" data-status="${teacher.status}">
-                                <div class="p-6">
-                                    <!-- Header Kartu -->
-                                    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-6">
-                                        <div class="flex-1">
-                                            <div class="flex items-center justify-between mb-2">
-                                                <h3 class="text-xl font-bold text-gray-800">${teacher.name}</h3>
-                                                <div class="flex items-center space-x-2">
-                                                    <span class="inline-flex px-3 py-1 text-sm font-semibold rounded-full bg-gray-100 text-gray-800">
-                                                        ${teacher.status}
-                                                    </span>
-                                                    <span class="text-lg font-bold ${progress === 100 ? 'text-green-600' : progress >= 70 ? 'text-blue-600' : progress >= 50 ? 'text-yellow-600' : 'text-red-600'}">
-                                                        ${progress}%
-                                                    </span>
-                                                </div>
-                                            </div>
-                                            <p class="text-gray-600 text-sm">NIP: ${teacher.nip}</p>
-                                        </div>
-                                    </div>
-
-                                    <!-- Progress Bar -->
-                                    <div class="mb-6">
-                                        <div class="w-full bg-gray-200 rounded-full h-3">
-                                            <div class="h-3 rounded-full transition-all duration-500 ${
-                                                progress === 100 ? 'bg-green-500' : 
-                                                progress >= 70 ? 'bg-blue-500' : 
-                                                progress >= 50 ? 'bg-yellow-500' : 'bg-red-500'
-                                            }" style="width: ${progress}%"></div>
-                                        </div>
-                                        <div class="flex justify-between text-xs text-gray-500 mt-1">
-                                            <span>0%</span>
-                                            <span>${progress}% Selesai (${teacher.completedCount}/${teacher.totalCount})</span>
-                                            <span>100%</span>
-                                        </div>
-                                    </div>
-
-                                    <!-- Link Dokumen (Versi Submit Button) -->
-                                    <div class="mt-4">
-                                        <h4 class="text-lg font-semibold text-gray-800 mb-3">Status Pengumpulan Dokumen:</h4>
-                                        <div class="doc-container">
-                                            ${teacher.documents.map(doc => `
-                                                ${doc.completed ? `
-                                                    <div class="doc-item inline-flex items-center px-2 py-1 rounded bg-green-100 text-green-800 group">
-                                                        <span class="text-xs font-medium">${doc.name}</span>
-                                                        <i class="fas fa-check-circle text-green-600 ml-1 text-xs"></i>
-                                                        ${doc.link ? `
-                                                            <a href="${doc.link}" target="_blank" class="ml-2 text-blue-600 hover:text-blue-800">
-                                                                <i class="fas fa-external-link-alt text-xs"></i>
-                                                            </a>
-                                                        ` : ''}
-                                                        ${doc.submittedDate ? `
-                                                            <span class="ml-2 text-xs text-gray-500">${new Date(doc.submittedDate).toLocaleDateString('id-ID')}</span>
-                                                        ` : ''}
-                                                    </div>
-                                                ` : `
-                                                    <button onclick="openSubmitModal('${teacher.name}', '${doc.name}')" class="doc-item inline-flex items-center px-2 py-1 rounded bg-gray-100 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-all duration-200 group">
-                                                        <span class="text-xs font-medium">${doc.name}</span>
-                                                        <i class="fas fa-upload ml-1 text-xs"></i>
-                                                    </button>
-                                                `}
-                                            `).join('')}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-                    });
-                }
-
-                container.innerHTML = cardsHTML;
+                // Render grafik batang dengan data yang difilter
+                renderProgressChart(filteredData);
             }
 
             function updateLastUpdateTime() {
@@ -1763,6 +1632,24 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
             }
 
+            // Event listeners untuk modal detail guru
+            const closeDetailModalBtn = document.getElementById('close-detail-modal');
+            const teacherDetailModal = document.getElementById('teacher-detail-modal');
+            
+            if (closeDetailModalBtn) {
+                closeDetailModalBtn.addEventListener('click', () => {
+                    teacherDetailModal.classList.remove('show');
+                });
+            }
+            
+            if (teacherDetailModal) {
+                teacherDetailModal.addEventListener('click', (e) => {
+                    if (e.target === teacherDetailModal) {
+                        teacherDetailModal.classList.remove('show');
+                    }
+                });
+            }
+
             window.addEventListener('scroll', () => {
                 changeHeaderStyle();
                 highlightActiveLink();
@@ -1779,4 +1666,3 @@ document.addEventListener('DOMContentLoaded', function() {
     </script>
 </body>
 </html>
-
